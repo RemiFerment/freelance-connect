@@ -1,7 +1,12 @@
 security:
+    role_hierarchy:
+        ROLE_CLIENT: []
+        ROLE_FREELANCE: []
+        ROLE_ADMIN: [ROLE_CLIENT, ROLE_FREELANCE, ROLE_ALLOWED_TO_SWITCH]
+
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
@@ -27,8 +32,8 @@ security:
 
             login_throttling:
                 max_attempts: 3
-                interval: '1 minute'
-            
+                interval: "1 minute"
+
             logout:
                 path: app_logout
                 target: app_login
@@ -41,8 +46,9 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/client, roles: ROLE_CLIENT }
+        - { path: ^/freelance, roles: ROLE_FREELANCE }
 
 when@test:
     security:
