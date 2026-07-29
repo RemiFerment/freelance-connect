@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -21,6 +22,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message: 'l\'email est obligatoire')]
+    #[Assert\Email(message: 'l\'email doit être valide')]
     private ?string $email = null;
 
     /**
@@ -42,27 +45,51 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $candidacies;
 
     #[ORM\Column(length: 150)]
+    #[Assert\NotBlank(message: 'le prénom est obligatoire')]
+    #[Assert\Length(
+        min: 2,
+        max: 150,
+        minMessage: 'le prénom doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'le prénom ne peut pas dépasser {{ limit }} caractères',
+    )]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 150)]
+    #[Assert\NotBlank(message: 'le nom est obligatoire')]
+    #[Assert\Length(
+        min: 2,
+        max: 150,
+        minMessage: 'le nom doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'le nom ne peut pas dépasser {{ limit }} caractères',
+    )]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\NotBlank(message: 'le numéro de téléphone est obligatoire')]
+    #[Assert\Regex(
+        pattern: '/^\+?[0-9]{7,20}$/',
+        message: 'le numéro de téléphone doit être valide',
+    )]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'l\'adresse est obligatoire')]
     private ?string $adress = null;
 
     #[ORM\Column(length: 10)]
+    #[Assert\NotBlank(message: 'le code postal est obligatoire')]
     private ?string $postalCode = null;
 
     #[ORM\Column(length: 150)]
+    #[Assert\NotBlank(message: 'la ville est obligatoire')]
     private ?string $city = null;
 
     #[ORM\Column(length: 150)]
+    #[Assert\NotBlank(message: 'le pays est obligatoire')]
     private ?string $country = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'le nom de l\'entreprise est obligatoire')]
     private ?string $companyName = null;
 
     #[ORM\Column]
