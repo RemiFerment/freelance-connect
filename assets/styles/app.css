@@ -1,3 +1,13 @@
-body {
-    background-color: skyblue;
+/*** Navbar ***/
+
+#offcanvasNavbar {
+    width: 300px;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
 }
