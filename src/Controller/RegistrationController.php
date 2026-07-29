@@ -4,42 +4,27 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Interfaces\RegistrationManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, RegistrationManagerInterface $registrationManager): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            $plainPassword = $form->get('plainPassword')->getData();
-
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
-
-            // Set the account type based on the selected option
+            $plainPassword = $form->get('plainPassword')->getData();            
             $accountType = $form->get('accountType')->getData();
-            if ($accountType === 'ROLE_CLIENT') {
-                $user->setRoles(['ROLE_CLIENT']);
-            } elseif ($accountType === 'ROLE_FREELANCE') {
-                $user->setRoles(['ROLE_FREELANCE']);
-            }
 
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            // do anything else you need here, like send an email
-
+            $registrationManager->register($user, $plainPassword, $accountType);
+            
             return $this->redirectToRoute('app_login');
         }
 

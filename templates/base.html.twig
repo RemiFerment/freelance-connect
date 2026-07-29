@@ -21,7 +21,13 @@
         <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
         {% endif %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
+    <body class="d-flex flex-column min-vh-100">
+        {% include 'partials/_navbar.html.twig' %}
+
+        <main class="container my-5 pt-5 flex-grow-1">
+            {% block body %}{% endblock %}
+        </main>
+
+        {% include 'partials/_footer.html.twig' %}
     </body>
 </html>

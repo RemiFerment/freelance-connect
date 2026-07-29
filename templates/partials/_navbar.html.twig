@@ -1,0 +1,73 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm fixed-top">
+    <div class="container">
+
+        <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">
+            FreelanceConnect
+        </a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasNavbar"
+            aria-controls="offcanvasNavbar" 
+            aria-expanded="false" 
+            aria-label="Ouvrir le menu"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="offcanvas offcanvas-end" tabindex= "-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNavbarlabel">
+                    FreelanceConnect
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    aria-label="Close"
+                ></button>
+            </div>
+
+            <div class="offcanvas-body">
+
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+
+                    {% if app.user %}
+
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="#">
+                                Tableau de bord
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="{{ path('app_logout') }}">
+                                Déconnexion
+                            </a>
+                        </li>
+                    
+                    {% else %}
+
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="{{ path('app_login') }}">
+                                Connexion
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="{{ path('app_register') }}">
+                                Inscription
+                            </a>
+                        </li>
+
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
