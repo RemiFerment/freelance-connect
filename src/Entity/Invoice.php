@@ -37,8 +37,12 @@ class Invoice
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Mission $mission = null;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?\DateTimeImmutable $createdAt = null;
+
+    public function __construct(){
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {

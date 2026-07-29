@@ -28,10 +28,10 @@ class Mission
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $deadline = null;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne]
@@ -62,6 +62,8 @@ class Mission
     {
         $this->categories = new ArrayCollection();
         $this->candidacies = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = $this->createdAt;
     }
 
     public function getId(): ?int
