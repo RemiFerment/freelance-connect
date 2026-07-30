@@ -27,6 +27,7 @@
 						<th>Budget</th>
 						<th>Délai</th>
 						<th>Dernière modification</th>
+						<th>Status</th>
 						<th class="text-center">Actions</th>
 					</tr>
 				</thead>
@@ -44,6 +45,11 @@
 							<td>{{ mission.deadline ? mission.deadline|date('d/m/Y') : '-' }}</td>
 							<td>
 								<small class="text-muted">{{ mission.updatedAt ? mission.updatedAt|date('d/m/Y H:i') : '-' }}</small>
+							</td>
+							<td>
+								<span class="badge bg-{{ mission.status.code == 'COMPLETED' ? 'success' : 'secondary' }}">
+									{{ mission.status.label|capitalize }}
+								</span>
 							</td>
 							<td>
 								<div class="d-flex gap-2 justify-content-center">
