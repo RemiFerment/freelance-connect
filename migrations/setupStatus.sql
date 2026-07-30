@@ -9,9 +9,9 @@ INSERT INTO candidacy_status (`label`,`code`)
 VALUES
 ("En attente","PENDING"),
 ("Acceptée","ACCEPTED"),
-("Refusée","REFUSED"),
+("Refusée","REFUSED");
 
 INSERT INTO invoice_status (`label`,`code`)
 VALUES
 ("En attente","PENDING"),
-("Payé","PAID")
+("Payé","PAID");

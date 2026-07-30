@@ -2,6 +2,7 @@
 
 namespace App\Interfaces;
 
+use App\Entity\Candidacy;
 use App\Entity\Mission;
 use App\Entity\User;
 
@@ -34,7 +35,7 @@ interface MissionManagerInterface
      * @param User $client
      * @param User $freelance
      */
-    public function acceptCandidacy(Mission $mission, User $client, User $freelance): void;
+    public function acceptCandidacy(Mission $mission, Candidacy $candidacy): void;
 
     /**
      * Refuses a candidacy for a mission if the current user is the owner.
@@ -42,12 +43,17 @@ interface MissionManagerInterface
      * @param User $client
      * @param User $freelance
      */
-    public function refuseCandidacy(Mission $mission, User $client, User $freelance): void;
+    public function refuseCandidacy(Mission $mission, Candidacy $candidacy): void;
 
     /**
-     * Deletes a mission if the current user is the owner.
+     * Sets a mission as completed.
      * @param Mission $mission
-     * @param User $currentUser
      */
-    public function delete(Mission $mission, User $currentUser): void;
+    public function setMissionCompleted(Mission $mission): void;
+
+    /**
+     * [ADMIN] Deletes a mission.
+     * @param Mission $mission
+     */
+    public function delete(Mission $mission): void;
 }

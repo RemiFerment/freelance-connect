@@ -1,87 +1,90 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Client Dashboard{% endblock %}
+{% block title %}Client Dashboard
+{% endblock %}
 
 {% block body %}
 
-<div class="container py-5">
+	<div class="container py-5">
 
-    <div class="mb-4">
-        <h1 class="fw-bold">
-            Bonjour {{ app.user.firstname }} 
-        </h1>
+		<div class="mb-4">
+			<h1 class="fw-bold">
+				Bonjour
+				{{ app.user.firstname }}
+			</h1>
 
-        <p class="text-muted">
-            Bienvenue dans votre espace client.
-            Gérez vos missions et vos collaborations.
-        </p>
-    </div>
-
-
-    <div class="row g-4">
-
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        Mes missions
-                    </h5>
-
-                    <p class="card-text text-muted">
-                        Créez, modifiez et suivez vos offres de missions.
-                    </p>
-
-                    <a href="#" class="btn btn-primary">
-                        Voir mes missions
-                    </a>
-                </div>
-            </div>
-        </div>
+			<p class="text-muted">
+				Bienvenue dans votre espace client.
+				            Gérez vos missions et vos collaborations.
+			</p>
+		</div>
 
 
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
+		<div class="row g-4">
 
-                    <h5 class="card-title">
-                        Candidatures reçues
-                    </h5>
+			<div class="col-md-4">
+				<div class="card shadow-sm h-100">
+					<div class="card-body">
+						<h5 class="card-title">
+							Mes missions
+						</h5>
 
-                    <p class="card-text text-muted">
-                        Consultez les profils des freelances intéressés.
-                    </p>
+						<p class="card-text text-muted">
+							Créez, modifiez et suivez vos offres de missions.
+						</p>
 
-                    <a href="#" class="btn btn-primary">
-                        Voir les candidatures
-                    </a>
+						<a href="{{ path('app_client_index') }}" class="btn btn-primary">
 
-                </div>
-            </div>
-        </div>
+							Voir mes missions
+						</a>
+					</div>
+				</div>
+			</div>
 
 
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
+			<div class="col-md-4">
+				<div class="card shadow-sm h-100">
+					<div class="card-body">
 
-                    <h5 class="card-title">
-                        Factures
-                    </h5>
+						<h5 class="card-title">
+							Candidatures reçues
+						</h5>
 
-                    <p class="card-text text-muted">
-                        Consultez et gérez vos factures.
-                    </p>
+						<p class="card-text text-muted">
+							Consultez les profils des freelances intéressés.
+						</p>
 
-                    <a href="#" class="btn btn-primary">
-                        Voir les factures
-                    </a>
+						<a href="#" class="btn btn-primary">
+							Voir les candidatures
+						</a>
 
-                </div>
-            </div>
-        </div>
+					</div>
+				</div>
+			</div>
 
-    </div>
 
-</div>
+			<div class="col-md-4">
+				<div class="card shadow-sm h-100">
+					<div class="card-body">
+
+						<h5 class="card-title">
+							Factures
+						</h5>
+
+						<p class="card-text text-muted">
+							Consultez et gérez vos factures.
+						</p>
+
+						<a href="#" class="btn btn-primary">
+							Voir les factures
+						</a>
+
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
 
 {% endblock %}
