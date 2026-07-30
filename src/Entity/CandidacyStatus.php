@@ -15,7 +15,9 @@ class CandidacyStatus
     #[ORM\Column]
     private ?int $id = null;
 
-
+    /** 
+     * @var Collection<int, Candidacy>
+     */
     #[ORM\OneToMany(mappedBy: 'status', targetEntity: Candidacy::class)]
     private Collection $candidacies;
 
@@ -59,8 +61,32 @@ class CandidacyStatus
         return $this;
     }
 
+    /**
+     * @return Collection<int, Candidacy>
+     */
     public function getCandidacies(): Collection
     {
         return $this->candidacies;
+    }
+
+    public function addCandidacy(Candidacy $candidacy): static
+    {
+        if (!$this->candidacies->contains($candidacy)) {
+            $this->candidacies->add($candidacy);
+            $candidacy->setStatus($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCandidacy(Candidacy $candidacy): static
+    {
+        if ($this->candidacies->removeElement($candidacy)) {
+            if ($candidacy->getStatus() === $this) {
+                $candidacy->setStatus(null);
+            }
+        }
+
+        return $this;
     }
 }
