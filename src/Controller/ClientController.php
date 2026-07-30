@@ -41,7 +41,7 @@ final class ClientController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_client_show', methods: ['GET'])]
+    #[Route('/mission/{id}', name: 'app_client_show', methods: ['GET'])]
     public function show(Mission $mission): Response
     {
         return $this->render('client/show.html.twig', [
@@ -49,7 +49,7 @@ final class ClientController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_client_edit', methods: ['GET', 'POST'])]
+    #[Route('/mission/{id}/edit', name: 'app_client_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Mission $mission, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(MissionType::class, $mission);
@@ -67,7 +67,7 @@ final class ClientController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_client_delete', methods: ['POST'])]
+    #[Route('/mission/{id}', name: 'app_client_delete', methods: ['POST'])]
     public function delete(Request $request, Mission $mission, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $mission->getId(), $request->getPayload()->getString('_token'))) {

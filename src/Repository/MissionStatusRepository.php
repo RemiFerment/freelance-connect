@@ -16,6 +16,16 @@ class MissionStatusRepository extends ServiceEntityRepository
         parent::__construct($registry, MissionStatus::class);
     }
 
+    
+    public function findOneByCode(string $input): ?MissionStatus
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('m.code = :input')
+            ->setParameter('input', $input)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return MissionStatus[] Returns an array of MissionStatus objects
     //     */
