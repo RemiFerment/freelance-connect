@@ -16,6 +16,14 @@ class CandidacyStatusRepository extends ServiceEntityRepository
         parent::__construct($registry, CandidacyStatus::class);
     }
 
+    public function findOneByCode(string $input): ?CandidacyStatus
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.code = :input')
+            ->setParameter('input', $input)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
     //    /**
     //     * @return CandidacyStatus[] Returns an array of CandidacyStatus objects
     //     */

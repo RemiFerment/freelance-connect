@@ -7,7 +7,7 @@ namespace App\Enum;
  */
 enum CandidacyStatusEnum: string
 {
-    case PENDING = "PENGING";
+    case PENDING = "PENDING";
     case ACCEPTED = "ACCEPTED";
     case REFUSED = "REFUSED";
 }
