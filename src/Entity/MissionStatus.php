@@ -24,6 +24,9 @@ class MissionStatus
     #[ORM\OneToMany(targetEntity: Mission::class, mappedBy: 'status')]
     private Collection $missions;
 
+    #[ORM\Column(length: 255)]
+    private ?string $code = null;
+
     public function __construct()
     {
         $this->missions = new ArrayCollection();
@@ -72,6 +75,18 @@ class MissionStatus
                 $mission->setStatus(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): static
+    {
+        $this->code = $code;
 
         return $this;
     }
