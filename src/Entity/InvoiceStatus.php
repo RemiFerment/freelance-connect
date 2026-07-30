@@ -24,6 +24,9 @@ class InvoiceStatus
     #[ORM\OneToMany(targetEntity: Invoice::class, mappedBy: 'status')]
     private Collection $invoices;
 
+    #[ORM\Column(length: 255)]
+    private ?string $code = null;
+
     public function __construct()
     {
         $this->invoices = new ArrayCollection();
@@ -72,6 +75,18 @@ class InvoiceStatus
                 $invoice->setStatus(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): static
+    {
+        $this->code = $code;
 
         return $this;
     }
