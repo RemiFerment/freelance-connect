@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CandidacyRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\CandidacyStatus;
 
 #[ORM\Entity(repositoryClass: CandidacyRepository::class)]
 class Candidacy
@@ -30,6 +31,10 @@ class Candidacy
 
     #[ORM\ManyToOne]
     private ?User $client = null;
+
+    #[ORM\ManyToOne(inversedBy: 'candidacies')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?CandidacyStatus $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'candidacies')]
     private ?Mission $mission = null;
@@ -119,6 +124,18 @@ class Candidacy
     public function setMission(?Mission $mission): static
     {
         $this->mission = $mission;
+
+        return $this;
+    }
+
+    public function getStatus(): ?CandidacyStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?CandidacyStatus $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }
