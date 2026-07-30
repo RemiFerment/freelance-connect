@@ -66,6 +66,7 @@ final class ClientController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $missionManager->edit($mission, $this->getUser());
+                $this->addFlash("success", "La mission " . $mission->getTitle() . " a bien été modifié");
             } catch (\InvalidArgumentException $e) {
                 $this->addFlash("danger", $e->getMessage());
             }

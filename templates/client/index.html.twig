@@ -4,19 +4,25 @@
 {% endblock %}
 
 {% block body %}
-	<h1>Mes Missions</h1>
+	<div class="d-flex align-items-center gap-2 mb-3">
+		<a class="btn fs-3" href="{{ path('app_client_dashboard') }}">
+			<i class="bi bi-chevron-left"></i>
+		</a>
+
+
+		<h1>Mes Missions</h1>
+	</div>
 
 	<table class="table">
 		<thead>
 			<tr>
 				<th>Id</th>
-				<th>Title</th>
+				<th>Titre</th>
 				<th>Description</th>
 				<th>Budget</th>
-				<th>Deadline</th>
-				<th>CreatedAt</th>
-				<th>UpdatedAt</th>
-				<th>actions</th>
+				<th>Délai</th>
+				<th>Dernière modification</th>
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -25,13 +31,22 @@
 					<td>{{ mission.id }}</td>
 					<td>{{ mission.title }}</td>
 					<td>{{ mission.description }}</td>
-					<td>{{ mission.budget }}</td>
+					<td>{{ mission.budget }}
+						€</td>
 					<td>{{ mission.deadline ? mission.deadline|date('Y-m-d') : '' }}</td>
-					<td>{{ mission.createdAt ? mission.createdAt|date('Y-m-d H:i:s') : '' }}</td>
 					<td>{{ mission.updatedAt ? mission.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
 					<td>
-						<a href="{{ path('app_client_show', {'id': mission.id}) }}">Regarder</a>
-						<a href="{{ path('app_client_edit', {'id': mission.id}) }}">Modifier</a>
+						<div class="d-flex gap-2">
+							<a class="d-flex gap-2 align-items-center btn btn-secondary" href="{{ path('app_client_show', {'id': mission.id}) }}">
+								<i class="bi bi-eye-fill fs-3"></i>
+								<span>Regarder</span>
+							</a>
+
+							<a class="d-flex gap-2 align-items-center btn btn-primary" href="{{ path('app_client_edit', {'id': mission.id}) }}">
+								<i class="bi bi-pencil-fill fs-3"></i>
+								<span>Modifier</span>
+							</a>
+						</div>
 					</td>
 				</tr>
 			{% else %}

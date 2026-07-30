@@ -4,17 +4,23 @@
 {% endblock %}
 
 {% block body %}
-	<h1>Mission</h1>
+	<div class="d-flex align-items-center gap-2 mb-3">
+		<a class="btn fs-3" href="{{ path('app_client_index') }}">
+
+			<i class="bi bi-chevron-left"></i>
+		</a>
+
+
+		<h1>Détails de la mission :
+			{{ mission.title }}</h1>
+	</div>
+
 
 	<table class="table">
 		<tbody>
 			<tr>
 				<th>Id</th>
 				<td>{{ mission.id }}</td>
-			</tr>
-			<tr>
-				<th>Titre</th>
-				<td>{{ mission.title }}</td>
 			</tr>
 			<tr>
 				<th>Description</th>
