@@ -4,58 +4,66 @@
 {% endblock %}
 
 {% block body %}
-	<div class="d-flex align-items-center gap-2 mb-3">
-		<a class="btn fs-3" href="{{ path('app_client_dashboard') }}">
-			<i class="bi bi-chevron-left"></i>
+	<div class="d-flex align-items-center justify-content-between mb-4">
+		<div class="d-flex align-items-center gap-3">
+			<a class="btn btn-outline-secondary" href="{{ path('app_client_dashboard') }}">
+				<i class="bi bi-chevron-left"></i>
+			</a>
+			<h1 class="m-0">Mes Missions</h1>
+		</div>
+		<a class="btn btn-success" href="{{ path('app_client_new') }}">
+			<i class="bi bi-plus-circle"></i>
+			Nouvelle Mission
 		</a>
-
-
-		<h1>Mes Missions</h1>
 	</div>
 
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Id</th>
-				<th>Titre</th>
-				<th>Description</th>
-				<th>Budget</th>
-				<th>Délai</th>
-				<th>Dernière modification</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for mission in missions %}
-				<tr>
-					<td>{{ mission.id }}</td>
-					<td>{{ mission.title }}</td>
-					<td>{{ mission.description }}</td>
-					<td>{{ mission.budget }}
-						€</td>
-					<td>{{ mission.deadline ? mission.deadline|date('Y-m-d') : '' }}</td>
-					<td>{{ mission.updatedAt ? mission.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-					<td>
-						<div class="d-flex gap-2">
-							<a class="d-flex gap-2 align-items-center btn btn-secondary" href="{{ path('app_client_show', {'id': mission.id}) }}">
-								<i class="bi bi-eye-fill fs-3"></i>
-								<span>Regarder</span>
-							</a>
-
-							<a class="d-flex gap-2 align-items-center btn btn-primary" href="{{ path('app_client_edit', {'id': mission.id}) }}">
-								<i class="bi bi-pencil-fill fs-3"></i>
-								<span>Modifier</span>
-							</a>
-						</div>
-					</td>
-				</tr>
-			{% else %}
-				<tr>
-					<td colspan="8">Aucune mission à afficher.</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-
-	<a class="btn btn-success" href="{{ path('app_client_new') }}">Créer une nouvelle mission</a>
+	{% if missions %}
+		<div class="table-responsive">
+			<table class="table table-hover table-striped">
+				<thead class="table-light">
+					<tr>
+						<th>Id</th>
+						<th>Titre</th>
+						<th>Budget</th>
+						<th>Délai</th>
+						<th>Dernière modification</th>
+						<th class="text-center">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for mission in missions %}
+						<tr>
+							<td>
+								<span class="badge bg-secondary">{{ mission.id }}</span>
+							</td>
+							<td class="fw-semibold">{{ mission.title }}</td>
+							<td>
+								<span class="badge bg-info">{{ mission.budget }}
+									€</span>
+							</td>
+							<td>{{ mission.deadline ? mission.deadline|date('d/m/Y') : '-' }}</td>
+							<td>
+								<small class="text-muted">{{ mission.updatedAt ? mission.updatedAt|date('d/m/Y H:i') : '-' }}</small>
+							</td>
+							<td>
+								<div class="d-flex gap-2 justify-content-center">
+									<a class="btn btn-sm btn-outline-secondary" href="{{ path('app_client_show', {'id': mission.id}) }}" title="Regarder">
+										<i class="bi bi-eye-fill fs-5"></i>
+									</a>
+									<a class="btn btn-sm btn-outline-primary" href="{{ path('app_client_edit', {'id': mission.id}) }}" title="Modifier">
+										<i class="bi bi-pencil-fill fs-5"></i>
+									</a>
+								</div>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else %}
+		<div class="alert alert-info text-center" role="alert">
+			<i class="bi bi-info-circle"></i>
+			Aucune mission à afficher.
+		</div>
+	{% endif %}
 {% endblock %}

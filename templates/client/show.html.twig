@@ -4,59 +4,83 @@
 {% endblock %}
 
 {% block body %}
-	<div class="d-flex align-items-center gap-2 mb-3">
-		<a class="btn fs-3" href="{{ path('app_client_index') }}">
+	<div class="container mt-5">
+		<div class="d-flex align-items-center gap-2 mb-4">
+			<a class="btn btn-outline-secondary" href="{{ path('app_client_index') }}">
+				<i class="bi bi-chevron-left"></i>
+			</a>
+			<h1 class="mb-0">{{ mission.title }}</h1>
+		</div>
 
-			<i class="bi bi-chevron-left"></i>
-		</a>
+		<div class="card shadow-sm">
+			<div class="card-body">
+				<h5 class="card-title mb-4">Détails de la mission</h5>
+				<table class="table table-borderless mb-0">
+					<tbody>
+						<tr>
+							<th class="ps-0 text-secondary">Id</th>
+							<td class="pe-0">{{ mission.id }}</td>
+						</tr>
+						<tr>
+							<th class="ps-0 text-secondary">Description</th>
+							<td class="pe-0">{{ mission.description }}</td>
+						</tr>
+						<tr>
+							<th class="ps-0 text-secondary">Budget</th>
+							<td class="pe-0">
+								{{ mission.budget | number_format(2, '.', ',') }}
+								€
+							</td>
+						</tr>
+						<tr>
+							<th class="ps-0 text-secondary">Catégories</th>
+							<td class="pe-0">
+								{% for category in mission.categories %}
+									<span class="badge fs-6 bg-info text-dark me-1">
+										{{ category.label }}
+									</span>
+								{% endfor %}
+							</td>
+						</tr>
 
+						<tr>
+							<th class="ps-0 text-secondary">Délai</th>
+							<td class="pe-0">{{ mission.deadline ? mission.deadline|date('Y-m-d') : 'N/A' }}</td>
+						</tr>
+						<tr>
+							<th class="ps-0 text-secondary">Créé le</th>
+							<td class="pe-0">
+								<small class="text-muted">{{ mission.createdAt ? mission.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</small>
+							</td>
+						</tr>
+						<tr>
+							<th class="ps-0 text-secondary">Mis à jour le</th>
+							<td class="pe-0">
+								<small class="text-muted">{{ mission.updatedAt ? mission.updatedAt|date('Y-m-d H:i:s') : 'N/A' }}</small>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 
-		<h1>Détails de la mission :
-			{{ mission.title }}</h1>
-	</div>
+		<div class="d-flex gap-2 mt-4 flex-wrap">
+			<a class="btn btn-secondary" href="{{ path('app_client_index') }}">
+				<i class="bi bi-arrow-left"></i>
+				Retour
+			</a>
 
+			<a class="btn btn-primary" href="{{ path('app_client_edit', {'id': mission.id}) }}">
+				<i class="bi bi-pencil-fill"></i>
+				Modifier
+			</a>
 
-	<table class="table">
-		<tbody>
-			<tr>
-				<th>Id</th>
-				<td>{{ mission.id }}</td>
-			</tr>
-			<tr>
-				<th>Description</th>
-				<td>{{ mission.description }}</td>
-			</tr>
-			<tr>
-				<th>Budget</th>
-				<td>{{ mission.budget }}</td>
-			</tr>
-			<tr>
-				<th>Délai</th>
-				<td>{{ mission.deadline ? mission.deadline|date('Y-m-d') : '' }}</td>
-			</tr>
-			<tr>
-				<th>Créé le</th>
-				<td>{{ mission.createdAt ? mission.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-			</tr>
-			<tr>
-				<th>Mis à jour le</th>
-				<td>{{ mission.updatedAt ? mission.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-			</tr>
-		</tbody>
-	</table>
+			{% if is_granted('ROLE_ADMIN') %}
+				{{ include('client/_delete_form.html.twig') }}
+			{% endif %}
 
-	<div class="d-flex gap-2">
-		<a class="btn btn-secondary" href="{{ path('app_client_index') }}">Retour</a>
-
-		<a class="btn btn-primary" href="{{ path('app_client_edit', {'id': mission.id}) }}">
-			<i class="bi bi-pencil-fill"></i>
-			Modifier</a>
-
-		{% if is_granted('ROLE_ADMIN') %}
-			{{ include('client/_delete_form.html.twig') }}
-		{% endif %}
-
-		{{ include('client/_cancel_form.html.twig') }}
+			{{ include('client/_cancel_form.html.twig') }}
+		</div>
 	</div>
 
 {% endblock %}
