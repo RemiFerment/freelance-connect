@@ -1,6 +1,7 @@
-<form method="post" action="{{ path('app_client_mission_cancel', {'id': mission.id}) }}" onsubmit="return confirm('Êtes-vous sûr d'annuler cette mission (Irreversible)?');">
+<form method="post" action="{{ path('app_client_mission_cancel', {'id': mission.id}) }}" onsubmit="return confirm('Êtes-vous sûr d\'annuler cette mission (Irreversible)?');">
 	<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ mission.id) }}">
-	<button class="btn btn-danger">
+	<button class="btn btn-danger btn-lg active">
+
 		<i class="bi bi-x-octagon"></i>
 		Annuler la mission</button>
 

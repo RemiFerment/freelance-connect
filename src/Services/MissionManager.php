@@ -32,7 +32,7 @@ final class MissionManager implements MissionManagerInterface
             throw new \InvalidArgumentException("Cet utilisateur n'a pas les permissions nécessaire pour réaliser cette action.");
         }
         $pendingStatus = $this->missionStatusRepository->findOneByCode(MissionStatusEnum::PENDING->value);
-        if (!$mission->getStatus() !== $pendingStatus) {
+        if ($mission->getStatus() !== $pendingStatus) {
             throw new \InvalidArgumentException("Vous ne pouvez pas modifier cette mission, merci de revoir nos conditions d'utilisations.");
         }
         $mission->setUpdatedAt(new \DateTimeImmutable());
