@@ -7,7 +7,7 @@ namespace App\Enum;
  */
 enum MissionStatusEnum: string
 {
-    case PENDING = "PENGING";
+    case PENDING = "PENDING";
     case IN_PROGRESS = "IN_PROGRESS";
     case COMPLETED = "COMPLETED";
     case CANCELED = "CANCELED";

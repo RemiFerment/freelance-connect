@@ -19,27 +19,29 @@ class MissionRepository extends ServiceEntityRepository
     }
 
     /**
-     * Finds all missions associated with a specific client and optional status filters.
-     * @param User $client The client whose missions are to be retrieved.
-     * @param array $status An array of status codes to filter the missions. Defaults to ["PENDING"].
-     * @return Mission[] An array of Mission objects that match the criteria.
+     * Retrieves missions filtered by client and status.
+     *
+     * @param User|null $client The client to filter by, or null for all clients.
+     * @param array $status Status to filter missions. (add the MissionStatus entity here)
+     *
+     * @return Mission[] Matching mission objects, ordered by creation date.
      */
-    public function findAllMissionsByClient(User $client, array $status = ["PENDING"]): array
+    public function findAllMissionsByStatus(?User $client, array $status): array
     {
-        if (!in_array("ROLE_CLIENT", $client->getRoles())) {
-            throw new \UnexpectedValueException("The user don't have the permission to view missions.");
+        $qb = $this->createQueryBuilder("m");
+
+        if ($client !== null) {
+            $qb->andWhere("m.client = :client")
+                ->setParameter("client", $client);
         }
 
-        $queryBuilder = $this->createQueryBuilder("m")
-            ->andWhere("m.client = :id")
-            ->setParameter(":id", $client->getId());
-        for ($i = 0; $i < count($status); $i++) {
-            $queryBuilder->andWhere("m.status = :status_" . $i)
-                ->setParameter("status_" . $i, $status[$i]);
+        if (!empty($status)) {
+            $qb->andWhere("m.status IN (:statuses)")
+                ->setParameter("statuses", $status);
         }
-        $queryBuilder->orderBy("m.createdAt", "ASC");
 
-        return $queryBuilder->getQuery()
+        return $qb->orderBy("m.createdAt", "ASC")
+            ->getQuery()
             ->getResult();
     }
 

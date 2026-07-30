@@ -3,23 +3,31 @@
 namespace App\Controller;
 
 use App\Entity\Mission;
+use App\Enum\MissionStatusEnum;
 use App\Form\MissionType;
 use App\Interfaces\MissionManagerInterface;
 use App\Repository\MissionRepository;
+use App\Repository\MissionStatusRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/client')]
+#[IsGranted("ROLE_CLIENT")]
 final class ClientController extends AbstractController
 {
-    #[Route(name: 'app_client_index', methods: ['GET'])]
-    public function index(MissionRepository $missionRepository): Response
+    #[Route('/overview', name: 'app_client_index', methods: ['GET'])]
+    public function index(MissionRepository $missionRepository, MissionStatusRepository $missionStatusRep): Response
     {
+        $pendingStatus = $missionStatusRep->findOneByCode(MissionStatusEnum::PENDING->value);
+        $completedStatus = $missionStatusRep->findOneByCode(MissionStatusEnum::COMPLETED->value);
+        $inProgressStatus = $missionStatusRep->findOneByCode(MissionStatusEnum::IN_PROGRESS->value);
+        $showableStatus = [$pendingStatus, $completedStatus, $inProgressStatus];
         return $this->render('client/index.html.twig', [
-            'missions' => $missionRepository->findAllMissionsByClient($this->getUser()),
+            'missions' => $missionRepository->findAllMissionsByStatus($this->getUser(), $showableStatus),
         ]);
     }
 
@@ -50,13 +58,17 @@ final class ClientController extends AbstractController
     }
 
     #[Route('/mission/{id}/edit', name: 'app_client_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Mission $mission, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Mission $mission, MissionManagerInterface $missionManager): Response
     {
         $form = $this->createForm(MissionType::class, $mission);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            try {
+                $missionManager->edit($mission, $this->getUser());
+            } catch (\InvalidArgumentException $e) {
+                $this->addFlash("danger", $e->getMessage());
+            }
 
             return $this->redirectToRoute('app_client_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -67,12 +79,21 @@ final class ClientController extends AbstractController
         ]);
     }
 
+    #[Route('/mission/{id}/cancel', name: 'app_client_mission_cancel', methods: ['POST'])]
+    public function cancel(Request $request, Mission $mission, MissionManagerInterface $missionManager): Response
+    {
+        if ($this->isCsrfTokenValid('cancel' . $mission->getId(), $request->getPayload()->getString('_token'))) {
+            $missionManager->cancel($mission, $this->getUser());
+        }
+        return $this->redirectToRoute('app_client_index', [], Response::HTTP_SEE_OTHER);
+    }
+
     #[Route('/mission/{id}', name: 'app_client_delete', methods: ['POST'])]
-    public function delete(Request $request, Mission $mission, EntityManagerInterface $entityManager): Response
+    #[IsGranted("ROLE_ADMIN")]
+    public function delete(Request $request, Mission $mission, MissionManagerInterface $missionManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $mission->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($mission);
-            $entityManager->flush();
+            $missionManager->delete($mission);
         }
 
         return $this->redirectToRoute('app_client_index', [], Response::HTTP_SEE_OTHER);

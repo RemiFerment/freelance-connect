@@ -46,16 +46,14 @@ interface MissionManagerInterface
     public function refuseCandidacy(Mission $mission, Candidacy $candidacy): void;
 
     /**
-     * Sets a mission as completed if the current user is the owner.
+     * Sets a mission as completed.
      * @param Mission $mission
-     * @param User $currentClient
      */
-    public function setMissionCompleted(Mission $mission, User $currentClient): void;
+    public function setMissionCompleted(Mission $mission): void;
 
     /**
-     * Deletes a mission if the current user is the owner.
+     * [ADMIN] Deletes a mission.
      * @param Mission $mission
-     * @param User $currentUser
      */
-    public function delete(Mission $mission, User $currentUser): void;
+    public function delete(Mission $mission): void;
 }
