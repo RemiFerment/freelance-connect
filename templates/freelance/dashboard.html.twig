@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Freelance Dashboard{% endblock %}
+
+{% block body %}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <h1 class="fw-bold">
+            Bonjour {{ app.user.firstname }} 
+        </h1>
+
+        <p class="text-muted">
+            Bienvenue dans votre espace freelance.
+            Trouvez des missions et gérez vos candidatures.
+        </p>
+    </div>
+
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Missions disponibles
+                    </h5>
+
+                    <p class="card-text text-muted">
+                        Découvrez les missions ouvertes correspondant à vos compétences.
+                    </p>
+
+                    <a href="#" class="btn btn-primary">
+                        Rechercher des missions
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Mes candidatures
+                    </h5>
+
+                    <p class="card-text text-muted">
+                        Suivez l'état de vos candidatures.
+                    </p>
+
+                    <a href="#" class="btn btn-primary">
+                        Voir mes candidatures
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Mes factures
+                    </h5>
+
+                    <p class="card-text text-muted">
+                        Consultez vos paiements et factures.
+                    </p>
+
+                    <a href="#" class="btn btn-primary">
+                        Voir mes factures
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}
