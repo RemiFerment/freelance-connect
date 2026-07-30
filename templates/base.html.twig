@@ -24,7 +24,11 @@
     <body class="d-flex flex-column min-vh-100">
         {% include 'partials/_navbar.html.twig' %}
 
+
+
         <main class="container my-5 pt-5 flex-grow-1">
+            {% include 'partials/_flash_messages.html.twig' %}
+
             {% block body %}{% endblock %}
         </main>
 

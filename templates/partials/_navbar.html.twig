@@ -39,9 +39,25 @@
                     {% if app.user %}
 
                         <li class="nav-item">
-                            <a class="nav-link text-center" href="#">
-                                Tableau de bord
-                            </a>
+                            {% if is_granted('ROLE_ADMIN') %}
+
+                                <a class="nav-link text-center" href="{{ path('app_admin_dashboard') }}">
+                                    Dashboard Admin
+                                </a>
+
+                            {% elseif is_granted('ROLE_CLIENT') %}
+
+                                <a class="nav-link text-center" href="{{ path('app_client_dashboard') }}">
+                                    Mon espace client
+                                </a>
+
+                            {% elseif is_granted('ROLE_FREELANCE') %}
+
+                                <a class="nav-link text-center" href="{{ path('app_freelance_dashboard') }}">
+                                    Mon espace freelance
+                                </a>
+
+                            {% endif %}
                         </li>
 
                         <li class="nav-item">
