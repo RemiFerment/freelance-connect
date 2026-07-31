@@ -69,8 +69,11 @@ final class FreelanceController extends AbstractController
         $filters =$form->getData() ?? [];
         $missions = $missionRepository->findOpenMissionsFiltered($filters);
 
+        $completedMissions = $missionRepository->findCompletedMissionsByFreelance($this->getUser());
+
         return $this->render('freelance/missions.html.twig', [
             'missions' => $missions,
+            'completedMissions' => $completedMissions,
             'form' =>$form,
         ]);
     }

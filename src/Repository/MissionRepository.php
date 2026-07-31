@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Mission;
 use App\Entity\MissionStatus;
 use App\Enum\MissionStatusEnum;
+use App\Enum\CandidacyStatusEnum;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -88,6 +89,23 @@ class MissionRepository extends ServiceEntityRepository
         $qb->distinct();
 
         return $qb
+            ->orderBy('m.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findCompletedMissionsByFreelance(User $freelance): array
+    {
+        return $this->createQueryBuilder('m')
+            ->join('m.candidacies', 'c')
+            ->join('m.status', 's')
+            ->join('c.status', 'cs')
+            ->andWhere('c.freelance = :freelance')
+            ->andWhere('cs.code = :candidacyStatus')
+            ->andWhere('s.code = :missionStatus')
+            ->setParameter('freelance', $freelance)
+            ->setParameter('candidacyStatus', CandidacyStatusEnum::ACCEPTED->value)
+            ->setParameter('missionStatus', MissionStatusEnum::COMPLETED->value)
             ->orderBy('m.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
