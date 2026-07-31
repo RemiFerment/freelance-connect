@@ -93,10 +93,11 @@ final class MissionManager implements MissionManagerInterface
                 $this->notificationManager->send($mission->getClient(), $_candidacy->getFreelance(), $acceptedMessage);
                 continue;
             }
-            $this->candidacyManager->toggleCandidacyStatus($_candidacy, CandidacyStatusEnum::REFUSED);
-
-            $refusedMessage = "Votre candidature pour la mission " . $mission->getTitle() . " a été refusée.";
-            $this->notificationManager->send($mission->getClient(), $_candidacy->getFreelance(), $refusedMessage);
+            if ($_candidacy->getStatus()->getCode() === CandidacyStatusEnum::PENDING) {
+                $this->candidacyManager->toggleCandidacyStatus($_candidacy, CandidacyStatusEnum::REFUSED);
+                $refusedMessage = "Votre candidature pour la mission " . $mission->getTitle() . " a été refusée.";
+                $this->notificationManager->send($mission->getClient(), $_candidacy->getFreelance(), $refusedMessage);
+            }
         }
         $mission->setFreelance($candidacy->getFreelance());
         $mission->setStatus($inProgressStatus);
