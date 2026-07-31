@@ -26,10 +26,17 @@ final class FreelanceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $candidacyManager->apply($candidacy, $this->getUser(), $mission);
-            $this->addFlash('success', 'Votre candidature a bien été envoyée.');
-            return $this->redirectToRoute('app_freelance_dashboard', [], Response::HTTP_SEE_OTHER);
+            try {
+                $candidacyManager->apply($candidacy, $this->getUser(), $mission);
+                $this->addFlash('success', 'Votre candidature a bien été envoyée.');
+                return $this->redirectToRoute('app_freelance_dashboard', [], Response::HTTP_SEE_OTHER);
+            } catch (\UnexpectedValueException $e) {
+                $this->addFlash('danger', $e->getMessage());
+                return $this->redirectToRoute('app_freelance_dashboard', [], Response::HTTP_SEE_OTHER);
+            } catch (\InvalidArgumentException $e) {
+                $this->addFlash('danger', $e->getMessage());
+                return $this->redirectToRoute('app_freelance_apply', ['id' => $mission->getId()], Response::HTTP_SEE_OTHER);
+            }
         }
 
         return $this->render('freelance/new.html.twig', [
@@ -39,7 +46,8 @@ final class FreelanceController extends AbstractController
     }
 
     #[Route('/candidacies', name: 'app_freelance_candidacies', methods: ['GET'])]
-    public function candidacies(CandidacyRepository $candidacyRepository): Response {
+    public function candidacies(CandidacyRepository $candidacyRepository): Response
+    {
 
         $candidacies = $candidacyRepository
             ->findByFreelance($this->getUser());
@@ -48,5 +56,4 @@ final class FreelanceController extends AbstractController
             'candidacies' => $candidacies,
         ]);
     }
-
 }

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CandidacyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\CandidacyStatus;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CandidacyRepository::class)]
 class Candidacy
@@ -15,12 +16,16 @@ class Candidacy
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 1, max: 255)]
     private ?string $motivation = null;
 
     #[ORM\Column(length: 255)]
     private ?string $cvFilePath = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 1, max: 255)]
     private ?string $projectLinks = null;
 
     #[ORM\Column]
