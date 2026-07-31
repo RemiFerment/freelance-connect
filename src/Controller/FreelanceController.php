@@ -28,7 +28,8 @@ final class FreelanceController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $candidacyManager->apply($candidacy, $this->getUser(), $mission);
+                $file = $form->get('cvFilePath')->getData();
+                $candidacyManager->apply($candidacy, $this->getUser(), $mission, $file);
                 $this->addFlash('success', 'Votre candidature a bien été envoyée.');
                 return $this->redirectToRoute('app_freelance_dashboard', [], Response::HTTP_SEE_OTHER);
             } catch (\UnexpectedValueException $e) {
