@@ -32,6 +32,8 @@ class CandidacyManager implements CandidacyManagerInterface
 
         $candidacy->setFreelance($freelance);
         $candidacy->setMission($mission);
+        //placeholder
+        $candidacy->setCvFilePath("");
         $candidacy->setClient($mission->getClient());
         $candidacy->setCreatedAt(new \DateTimeImmutable());
 
@@ -42,7 +44,6 @@ class CandidacyManager implements CandidacyManagerInterface
         }
 
         $candidacy->setStatus($status);
-       
         $this->em->persist($candidacy);
         $this->em->flush();
     }

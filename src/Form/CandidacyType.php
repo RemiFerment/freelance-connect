@@ -15,7 +15,7 @@ class CandidacyType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('motivation',TextareaType::class, [
+            ->add('motivation', TextareaType::class, [
                 'label' => 'Motivation',
                 'attr' => [
                     'placeholder' => 'Expliquez pourquoi vous êtes le meilleur candidat pour cette mission...',
@@ -24,7 +24,9 @@ class CandidacyType extends AbstractType
             ->add('cvFilePath', FileType::class, [
                 'label' => 'CV (PDF)',
                 'mapped' => false,
-                'accept' => 'application/pdf'
+                'attr' => [
+                    'accept' => 'application/pdf'
+                ]
             ])
             ->add('projectLinks', TextType::class, [
                 'label' => 'Project Links',
