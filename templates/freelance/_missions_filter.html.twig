@@ -1,0 +1,23 @@
+{{form_start(form) }}
+
+<div class="row g-3 mb-4 d-flex align-items-end">
+    <div class="col-md-3">
+        {{ form_row(form.category) }}
+    </div>
+    <div class="col-md-3">
+        {{ form_row(form.language) }}
+    </div>
+    <div class="col-md-2">
+        {{ form_row(form.minBudget) }}
+    </div>
+    <div class="col-md-2">
+        {{ form_row(form.maxBudget) }}
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100 mb-3">
+            Filtrer
+        </button>
+    </div>
+</div>
+
+{{ form_end(form) }}
