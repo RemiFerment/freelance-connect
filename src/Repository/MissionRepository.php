@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Mission;
 use App\Entity\MissionStatus;
+use App\Enum\MissionStatusEnum;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -43,6 +44,17 @@ class MissionRepository extends ServiceEntityRepository
         return $qb->orderBy("m.createdAt", "ASC")
             ->getQuery()
             ->getResult();
+    }
+
+    public function findOpenMissions(): array
+    {
+        return $this->createQueryBuilder('m')
+        ->join('m.status', 's')
+        ->andWhere('s.code = :status')
+        ->setParameter('status', MissionStatusEnum::PENDING->value)
+        ->orderBy('m.createdAt', 'DESC')
+        ->getQuery()
+        ->getResult();
     }
 
     //    /**
