@@ -7,14 +7,12 @@
 {% block body %}
 
 <div class="container">
-    <div class="d-flex align-items-center justify-content-between mb-4">
-		<div class="d-flex align-items-center gap-3">
-			<a class="btn btn-outline-secondary" href="{{ path('app_freelance_dashboard') }}">
+    <div class="d-flex align-items-center gap-2 mb-4">
+			<button type="button" class="btn btn-outline-secondary" onclick="history.back()">
 				<i class="bi bi-chevron-left"></i>
-			</a>
-			<h1 class="m-0"> Mes candidatures</h1>
+			</button>
+			<h1 class="mb-0">Mes candidatures</h1>
 		</div>
-	</div>
 
     {% if candidacies is empty %}
         <div class="alert alert-info">
