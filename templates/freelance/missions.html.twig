@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Missions disponibles{% endblock %}
+
+{% block body %}
+
+<div class="container">
+
+	<div class="d-flex align-items-center justify-content-between mb-4">
+		<div class="d-flex align-items-center gap-3">
+			<a class="btn btn-outline-secondary" href="{{ path('app_freelance_dashboard') }}">
+				<i class="bi bi-chevron-left"></i>
+			</a>
+			<h1 class="m-0">Missions disponibles</h1>
+		</div>
+	</div>
+
+	{% if missions is empty %}
+
+		<div class="alert alert-info">
+			<i class="bi bi-info-circle"></i>
+			Aucune mission à afficher.
+		</div>
+
+	{% else %}
+
+		<div class="row g-4">
+
+			{% for mission in missions %}
+
+				<div class="col-md-6">
+
+					<div class="card shadow-sm h-100">
+
+						<div class="card-body">
+
+							<h5 class="card-title">
+								{{ mission.title }}
+							</h5>
+
+							<p class="card-text">
+								{{ mission.description }}
+							</p>
+
+							<p>
+								<strong>Budget :</strong>
+								<span class="badge bg-info">
+									{{ mission.budget }} €
+								</span>
+							</p>
+
+							<p>
+								<strong>Délai :</strong>
+								{{ mission.deadline ? mission.deadline|date('d/m/Y') : '-' }}
+							</p>
+
+							<p>
+								<strong>Catégories :</strong>
+								{% for category in mission.categories %}
+									<span class="badge bg-info text-dark me-1">
+										{{ category.label }}
+									</span>
+								{% endfor %}
+							</p>
+
+							<div class="d-flex gap-2 mt-3">
+								<a class="btn btn-outline-secondary"
+								   href="{{ path('app_freelance_show', {'id': mission.id}) }}">
+									<i class="bi bi-eye-fill"></i>
+									Voir
+								</a>
+
+								<a class="btn btn-primary"
+								   href="{{ path('app_freelance_apply', {'id': mission.id}) }}">
+									<i class="bi bi-pencil-fill"></i>
+									Postuler
+								</a>
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+
+			{% endfor %}
+
+		</div>
+
+	{% endif %}
+
+</div>
+
+{% endblock %}

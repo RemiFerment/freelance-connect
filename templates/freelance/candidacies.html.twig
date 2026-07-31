@@ -7,7 +7,14 @@
 {% block body %}
 
 <div class="container">
-    <h1 class="mb-4">Mes candidatures</h1>
+    <div class="d-flex align-items-center justify-content-between mb-4">
+		<div class="d-flex align-items-center gap-3">
+			<a class="btn btn-outline-secondary" href="{{ path('app_freelance_dashboard') }}">
+				<i class="bi bi-chevron-left"></i>
+			</a>
+			<h1 class="m-0"> Mes candidatures</h1>
+		</div>
+	</div>
 
     {% if candidacies is empty %}
         <div class="alert alert-info">

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Candidacy;
 use App\Entity\Mission;
 use App\Form\CandidacyType;
+use App\Repository\MissionRepository;
 use App\Repository\CandidacyRepository;
 use App\Interfaces\CandidacyManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,6 +55,24 @@ final class FreelanceController extends AbstractController
 
         return $this->render('freelance/candidacies.html.twig', [
             'candidacies' => $candidacies,
+        ]);
+    }
+
+    #[Route('/missions', name: 'app_freelance_missions', methods: ['GET'])]
+    public function missions(MissionRepository $missionRepository): Response
+    {
+        $missions = $missionRepository->findOpenMissions();
+
+        return $this->render('freelance/missions.html.twig', [
+            'missions' => $missions,
+        ]);
+    }
+
+    #[Route('/mission/{id}', name: 'app_freelance_show', methods: ['GET'])]
+    public function show(Mission $mission): Response
+    {
+        return $this->render('freelance/show.html.twig', [
+            'mission' => $mission,
         ]);
     }
 }
