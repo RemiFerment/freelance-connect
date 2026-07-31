@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Candidacy;
 use App\Entity\Mission;
 use App\Form\CandidacyType;
+use App\Form\MissionFilterType;
 use App\Repository\MissionRepository;
 use App\Repository\CandidacyRepository;
 use App\Interfaces\CandidacyManagerInterface;
@@ -60,12 +61,20 @@ final class FreelanceController extends AbstractController
     }
 
     #[Route('/missions', name: 'app_freelance_missions', methods: ['GET'])]
-    public function missions(MissionRepository $missionRepository): Response
+    public function missions(Request $request, MissionRepository $missionRepository): Response
     {
-        $missions = $missionRepository->findOpenMissions();
+        $form = $this->createForm(MissionFilterType::class, null, ['method' => 'GET',]);
+
+        $form->handleRequest($request);
+        $filters =$form->getData() ?? [];
+        $missions = $missionRepository->findOpenMissionsFiltered($filters);
+
+        $completedMissions = $missionRepository->findCompletedMissionsByFreelance($this->getUser());
 
         return $this->render('freelance/missions.html.twig', [
             'missions' => $missions,
+            'completedMissions' => $completedMissions,
+            'form' =>$form,
         ]);
     }
 

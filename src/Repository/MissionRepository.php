@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Mission;
 use App\Entity\MissionStatus;
 use App\Enum\MissionStatusEnum;
+use App\Enum\CandidacyStatusEnum;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -55,6 +56,59 @@ class MissionRepository extends ServiceEntityRepository
         ->orderBy('m.createdAt', 'DESC')
         ->getQuery()
         ->getResult();
+    }
+
+    public function findOpenMissionsFiltered(array $filters = []): array
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->join('m.status', 's')
+            ->andWhere('s.code = :status')
+            ->setParameter('status', MissionStatusEnum::PENDING->value);
+
+        if (!empty($filters['category'])) {
+            $qb->join('m.categories', 'c')
+                ->andWhere("c= :category")
+                ->setParameter("category", $filters['category']);
+        }
+
+        if (!empty($filters['language'])) {
+            $qb->andWhere('m.language = :language')
+                ->setParameter('language', $filters['language']);
+        }
+
+        if (!empty($filters['minBudget'])) {
+            $qb->andWhere('m.budget >= :minBudget')
+                ->setParameter('minBudget', $filters['minBudget']);
+        }
+
+         if (!empty($filters['maxBudget'])) {
+            $qb->andWhere('m.budget <= :maxBudget')
+                ->setParameter('maxBudget', $filters['maxBudget']);
+        }
+
+        $qb->distinct();
+
+        return $qb
+            ->orderBy('m.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findCompletedMissionsByFreelance(User $freelance): array
+    {
+        return $this->createQueryBuilder('m')
+            ->join('m.candidacies', 'c')
+            ->join('m.status', 's')
+            ->join('c.status', 'cs')
+            ->andWhere('c.freelance = :freelance')
+            ->andWhere('cs.code = :candidacyStatus')
+            ->andWhere('s.code = :missionStatus')
+            ->setParameter('freelance', $freelance)
+            ->setParameter('candidacyStatus', CandidacyStatusEnum::ACCEPTED->value)
+            ->setParameter('missionStatus', MissionStatusEnum::COMPLETED->value)
+            ->orderBy('m.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**
