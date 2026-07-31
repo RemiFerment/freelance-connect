@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Candidacy;
+use App\Interfaces\MissionManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,5 +22,36 @@ final class CandidacyController extends AbstractController
         return $this->render('candidacy/show.html.twig', [
             'candidacy' => $candidacy,
         ]);
+    }
+
+    #[Route('/candidacy/accept/{id}', name: 'app_candidacy_accept')]
+    public function accept(Candidacy $candidacy, MissionManagerInterface $missionManager): Response
+    {
+        try {
+            $missionManager->acceptCandidacy($candidacy->getMission(), $candidacy, $this->getUser());
+            $this->addFlash("success", "La candidature a bien été acceptée.");
+            return $this->redirectToRoute('app_candidacy', ['id' => $candidacy->getId()], Response::HTTP_SEE_OTHER);
+        } catch (\InvalidArgumentException $e) {
+            $this->addFlash("danger", $e->getMessage());
+            return $this->redirectToRoute('app_client_index', [], Response::HTTP_SEE_OTHER);
+        } catch (\LogicException $e) {
+            $this->addFlash("danger", $e->getMessage());
+            return $this->redirectToRoute('app_client_index', [], Response::HTTP_SEE_OTHER);
+        }
+    }
+    #[Route('/candidacy/refuse/{id}', name: 'app_candidacy_refuse')]
+    public function refuse(Candidacy $candidacy, MissionManagerInterface $missionManager): Response
+    {
+        try {
+            $missionManager->refuseCandidacy($candidacy->getMission(), $candidacy, $this->getUser());
+            $this->addFlash("warning", "La candidature a bien été refusée.");
+            return $this->redirectToRoute('app_candidacy', ['id' => $candidacy->getId()], Response::HTTP_SEE_OTHER);
+        } catch (\InvalidArgumentException $e) {
+            $this->addFlash("danger", $e->getMessage());
+            return $this->redirectToRoute('app_client_index', [], Response::HTTP_SEE_OTHER);
+        } catch (\LogicException $e) {
+            $this->addFlash("danger", $e->getMessage());
+            return $this->redirectToRoute('app_client_index', [], Response::HTTP_SEE_OTHER);
+        }
     }
 }

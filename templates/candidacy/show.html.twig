@@ -78,7 +78,8 @@
 							</label>
 							<p>
 								{% if candidacy.cvFilePath %}
-									<a href="{{candidacy.cvFilePath}}" target="_blank" class="btn btn-sm btn-outline-secondary">Télécharger le CV</a>
+									{# A faire #}
+									<a href="#" class="btn btn-sm btn-outline-secondary">Télécharger le CV</a>
 								{% else %}
 									<span class="text-muted">Aucun CV fourni</span>
 								{% endif %}
@@ -94,13 +95,16 @@
 						<h5 class="card-title mb-0">Statut</h5>
 					</div>
 					<div class="card-body text-center">
-						<span class="badge bg-success fs-6">{{candidacy.status.label}}</span>
+						<span class="badge bg-{{candidacy.status.code == 'REFUSED' ? 'warning' : 'success' }} fs-6">{{candidacy.status.label}}</span>
+
 						<div class="mt-4 d-flex gap-2">
-							<a type="button" class="btn btn-success flex-fill">
+							<a href="{{path('app_candidacy_accept',{id:candidacy.id})}}" type="button" class="btn btn-success flex-fill">
+
 								<i class="bi bi-check-circle"></i>
 								Accepter
 							</a>
-							<a type="button" class="btn btn-danger flex-fill">
+							<a href="{{path('app_candidacy_refuse',{id:candidacy.id})}}" type="button" class="btn btn-danger flex-fill">
+
 								<i class="bi bi-x-circle"></i>
 								Refuser
 							</a>
