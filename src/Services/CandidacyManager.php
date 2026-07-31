@@ -43,7 +43,7 @@ class CandidacyManager implements CandidacyManagerInterface
             throw new FileException("Un problème est survenue lors du chargement du CV, assurez-vous qu'il s'agit bien d'un fichier PDF.");
         }
 
-        $targetDir = $this->kernel->getProjectDir() . "./upload/candidacies/" . $freelance->getId();
+        $targetDir = $this->kernel->getProjectDir() . "/upload/candidacies/" . $freelance->getId();
         if (!$fileSystem->exists($targetDir)) {
             $fileSystem->mkdir($targetDir);
         }
