@@ -56,6 +56,7 @@ final class MissionManager implements MissionManagerInterface
         if (count($allCandidacies) > 0) {
             $cancelMessage = "La mission " . $mission->getTitle() . " a été annulée.";
             foreach ($allCandidacies as $candidacy) {
+                $this->candidacyManager->toggleCandidacyStatus($candidacy, CandidacyStatusEnum::REFUSED);
                 $this->notificationManager->send($currentClient, $candidacy->getFreelance(), $cancelMessage);
             }
         }
@@ -103,7 +104,20 @@ final class MissionManager implements MissionManagerInterface
         $this->em->flush();
     }
 
-    public function refuseCandidacy(Mission $mission, Candidacy $candidacy, User $currentUser): void {}
+    public function refuseCandidacy(Mission $mission, Candidacy $candidacy, User $currentUser): void
+    {
+        if ($currentUser !== $mission->getClient()) {
+            throw new \InvalidArgumentException("Cet utilisateur n'a pas les permissions nécessaire pour réaliser cette action.");
+        }
+        $pendingStatus = $this->missionStatusRepository->findOneByCode(MissionStatusEnum::PENDING->value);
+        if (!$mission->getStatus() === $pendingStatus) {
+            throw new \LogicException("Impossible de refuser une candidature sur cette mission. Si le problème persiste, merci de contacter un administrateur.");
+        }
+
+        $this->candidacyManager->toggleCandidacyStatus($candidacy, CandidacyStatusEnum::REFUSED);
+        $refusedMessage = "Votre candidature pour la mission " . $mission->getTitle() . " a été refusée.";
+        $this->notificationManager->send($mission->getClient(), $candidacy->getFreelance(), $refusedMessage);
+    }
 
     public function delete(Mission $mission): void
     {
