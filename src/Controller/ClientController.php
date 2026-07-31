@@ -8,7 +8,6 @@ use App\Form\MissionType;
 use App\Interfaces\MissionManagerInterface;
 use App\Repository\MissionRepository;
 use App\Repository\MissionStatusRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,6 +59,10 @@ final class ClientController extends AbstractController
     #[Route('/mission/{id}/edit', name: 'app_client_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Mission $mission, MissionManagerInterface $missionManager): Response
     {
+        if ($this->getUser() !== $mission->getClient()) {
+            $this->addFlash("warning", "Vous ne pouvez pas accéder à cette ressource. (403)");
+            return $this->redirectToRoute('app_client_index', [], Response::HTTP_FORBIDDEN);
+        }
         $form = $this->createForm(MissionType::class, $mission);
         $form->handleRequest($request);
 
@@ -83,6 +86,10 @@ final class ClientController extends AbstractController
     #[Route('/mission/{id}/cancel', name: 'app_client_mission_cancel', methods: ['POST'])]
     public function cancel(Request $request, Mission $mission, MissionManagerInterface $missionManager): Response
     {
+        if ($this->getUser() !== $mission->getClient()) {
+            $this->addFlash("warning", "Vous ne pouvez pas accéder à cette ressource. (403)");
+            return $this->redirectToRoute('app_client_index', [], Response::HTTP_FORBIDDEN);
+        }
         if ($this->isCsrfTokenValid('cancel' . $mission->getId(), $request->getPayload()->getString('_token'))) {
             $missionManager->cancel($mission, $this->getUser());
         }
