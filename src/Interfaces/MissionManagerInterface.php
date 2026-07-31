@@ -32,18 +32,18 @@ interface MissionManagerInterface
     /**
      * Accepts a candidacy for a mission if the current user is the owner.
      * @param Mission $mission
-     * @param User $client
-     * @param User $freelance
+     * @param Candidacy $candidacy
+     * @param User $currentUser
      */
-    public function acceptCandidacy(Mission $mission, Candidacy $candidacy): void;
+    public function acceptCandidacy(Mission $mission, Candidacy $candidacy, User $currentUser): void;
 
     /**
      * Refuses a candidacy for a mission if the current user is the owner.
      * @param Mission $mission
-     * @param User $client
-     * @param User $freelance
+     * @param Candidacy $candidacy
+     * @param User $currentUser
      */
-    public function refuseCandidacy(Mission $mission, Candidacy $candidacy): void;
+    public function refuseCandidacy(Mission $mission, Candidacy $candidacy, User $currentUser): void;
 
     /**
      * Sets a mission as completed.

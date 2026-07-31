@@ -71,8 +71,12 @@ class CandidacyManager implements CandidacyManagerInterface
         $this->em->flush();
     }
 
-    public function toggleCandidacyStatus(Candidacy $candidacy, CandidacyStatus $status): void 
+    public function toggleCandidacyStatus(Candidacy $candidacy, CandidacyStatusEnum $newStatus): void
     {
-        
+        $status = $this->candidacyStatusRepository->findOneByCode($newStatus->value);
+        $candidacy->setStatus($status);
+
+        $this->em->persist($candidacy);
+        $this->em->flush();
     }
 }

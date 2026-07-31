@@ -3,9 +3,9 @@
 namespace App\Interfaces;
 
 use App\Entity\Candidacy;
-use App\Entity\CandidacyStatus;
 use App\Entity\User;
 use App\Entity\Mission;
+use App\Enum\CandidacyStatusEnum;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 interface CandidacyManagerInterface
@@ -23,5 +23,5 @@ interface CandidacyManagerInterface
     /**
      * 
      */
-    public function toggleCandidacyStatus(Candidacy $candidacy, CandidacyStatus $status): void;
+    public function toggleCandidacyStatus(Candidacy $candidacy, CandidacyStatusEnum $newStatus): void;
 }
