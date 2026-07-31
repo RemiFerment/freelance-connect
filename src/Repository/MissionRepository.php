@@ -57,6 +57,42 @@ class MissionRepository extends ServiceEntityRepository
         ->getResult();
     }
 
+    public function findOpenMissionsFiltered(array $filters = []): array
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->join('m.status', 's')
+            ->andWhere('s.code = :status')
+            ->setParameter('status', MissionStatusEnum::PENDING->value);
+
+        if (!empty($filters['category'])) {
+            $qb->join('m.categories', 'c')
+                ->andWhere("c= :category")
+                ->setParameter("category", $filters['category']);
+        }
+
+        if (!empty($filters['language'])) {
+            $qb->andWhere('m.language = :language')
+                ->setParameter('language', $filters['language']);
+        }
+
+        if (!empty($filters['minBudget'])) {
+            $qb->andWhere('m.budget >= :minBudget')
+                ->setParameter('minBudget', $filters['minBudget']);
+        }
+
+         if (!empty($filters['maxBudget'])) {
+            $qb->andWhere('m.budget <= :maxBudget')
+                ->setParameter('maxBudget', $filters['maxBudget']);
+        }
+
+        $qb->distinct();
+
+        return $qb
+            ->orderBy('m.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Mission[] Returns an array of Mission objects
     //     */
