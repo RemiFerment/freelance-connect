@@ -8,7 +8,6 @@ use App\Form\MissionType;
 use App\Interfaces\MissionManagerInterface;
 use App\Repository\MissionRepository;
 use App\Repository\MissionStatusRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +31,7 @@ final class ClientController extends AbstractController
     }
 
     #[Route('/new', name: 'app_client_new', methods: ['GET', 'POST'])]
-    public function create(Request $request, MissionManagerInterface $missionManager): Response
+    public function createMission(Request $request, MissionManagerInterface $missionManager): Response
     {
         $mission = new Mission();
         $form = $this->createForm(MissionType::class, $mission);
@@ -50,7 +49,7 @@ final class ClientController extends AbstractController
     }
 
     #[Route('/mission/{id}', name: 'app_client_show', methods: ['GET'])]
-    public function show(Mission $mission): Response
+    public function showMission(Mission $mission): Response
     {
         return $this->render('client/show.html.twig', [
             'mission' => $mission,
@@ -58,8 +57,12 @@ final class ClientController extends AbstractController
     }
 
     #[Route('/mission/{id}/edit', name: 'app_client_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Mission $mission, MissionManagerInterface $missionManager): Response
+    public function editMission(Request $request, Mission $mission, MissionManagerInterface $missionManager): Response
     {
+        if ($this->getUser() !== $mission->getClient()) {
+            $this->addFlash("warning", "Vous ne pouvez pas accéder à cette ressource. (403)");
+            return $this->redirectToRoute('app_client_index', [], Response::HTTP_FORBIDDEN);
+        }
         $form = $this->createForm(MissionType::class, $mission);
         $form->handleRequest($request);
 
@@ -81,8 +84,12 @@ final class ClientController extends AbstractController
     }
 
     #[Route('/mission/{id}/cancel', name: 'app_client_mission_cancel', methods: ['POST'])]
-    public function cancel(Request $request, Mission $mission, MissionManagerInterface $missionManager): Response
+    public function cancelMission(Request $request, Mission $mission, MissionManagerInterface $missionManager): Response
     {
+        if ($this->getUser() !== $mission->getClient()) {
+            $this->addFlash("warning", "Vous ne pouvez pas accéder à cette ressource. (403)");
+            return $this->redirectToRoute('app_client_index', [], Response::HTTP_FORBIDDEN);
+        }
         if ($this->isCsrfTokenValid('cancel' . $mission->getId(), $request->getPayload()->getString('_token'))) {
             $missionManager->cancel($mission, $this->getUser());
         }
@@ -98,5 +105,12 @@ final class ClientController extends AbstractController
         }
 
         return $this->redirectToRoute('app_client_index', [], Response::HTTP_SEE_OTHER);
+    }
+    #[Route('/missions/applies', name: 'app_client_mission_applies', methods: ['GET'])]
+    public function showApplies(MissionRepository $missionRep, MissionStatusRepository $missionStatusRep): Response
+    {
+        return $this->render('client/candidacy/show_candidacies_per_mission.html.twig', [
+            'missions' => $missionRep->findAllMissionsByStatus($this->getUser(), [$missionStatusRep->findOneByCode(MissionStatusEnum::PENDING->value)])
+        ]);
     }
 }

@@ -20,7 +20,7 @@
 	{% if missions %}
 		<div class="table-responsive">
 			<table class="table table-hover table-striped">
-				<thead class="table-light">
+				<thead class="table-dark">
 					<tr>
 						<th>Id</th>
 						<th>Titre</th>
@@ -39,7 +39,8 @@
 							</td>
 							<td class="fw-semibold">{{ mission.title }}</td>
 							<td>
-								<span class="badge bg-info">{{ mission.budget }}
+								<span class="badge bg-dark-subtle text-white">{{ mission.budget }}
+
 									€</span>
 							</td>
 							<td>{{ mission.deadline ? mission.deadline|date('d/m/Y') : '-' }}</td>

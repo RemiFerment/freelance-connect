@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Entity\Candidacy;
+use App\Entity\CandidacyStatus;
 use App\Entity\User;
 use App\Entity\Mission;
 use App\Interfaces\CandidacyManagerInterface;
@@ -55,7 +56,6 @@ class CandidacyManager implements CandidacyManagerInterface
 
         $candidacy->setFreelance($freelance);
         $candidacy->setMission($mission);
-        //placeholder
         $candidacy->setCvFilePath($filePath);
         $candidacy->setClient($mission->getClient());
         $candidacy->setCreatedAt(new \DateTimeImmutable());
@@ -67,6 +67,15 @@ class CandidacyManager implements CandidacyManagerInterface
         }
 
         $candidacy->setStatus($status);
+        $this->em->persist($candidacy);
+        $this->em->flush();
+    }
+
+    public function toggleCandidacyStatus(Candidacy $candidacy, CandidacyStatusEnum $newStatus): void
+    {
+        $status = $this->candidacyStatusRepository->findOneByCode($newStatus->value);
+        $candidacy->setStatus($status);
+
         $this->em->persist($candidacy);
         $this->em->flush();
     }

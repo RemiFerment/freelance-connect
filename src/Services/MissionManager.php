@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Entity\Candidacy;
 use App\Entity\Mission;
 use App\Entity\User;
+use App\Enum\CandidacyStatusEnum;
 use App\Enum\MissionStatusEnum;
+use App\Interfaces\CandidacyManagerInterface;
 use App\Interfaces\MissionManagerInterface;
 use App\Interfaces\NotificationManagerInterface;
 use App\Repository\MissionStatusRepository;
@@ -13,7 +15,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class MissionManager implements MissionManagerInterface
 {
-    public function __construct(private EntityManagerInterface $em, private MissionStatusRepository $missionStatusRepository, private NotificationManagerInterface $notification_manager) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+        private MissionStatusRepository $missionStatusRepository,
+        private NotificationManagerInterface $notificationManager,
+        private CandidacyManagerInterface $candidacyManager
+    ) {}
 
     public function create(Mission $mission, User $currentUser): void
     {
@@ -49,7 +56,8 @@ final class MissionManager implements MissionManagerInterface
         if (count($allCandidacies) > 0) {
             $cancelMessage = "La mission " . $mission->getTitle() . " a été annulée.";
             foreach ($allCandidacies as $candidacy) {
-                $this->notification_manager->send($currentClient, $candidacy->getFreelance(), $cancelMessage);
+                $this->candidacyManager->toggleCandidacyStatus($candidacy, CandidacyStatusEnum::REFUSED);
+                $this->notificationManager->send($currentClient, $candidacy->getFreelance(), $cancelMessage);
             }
         }
         $canceledStatus = $this->missionStatusRepository->findOneByCode(MissionStatusEnum::CANCELED->value);
@@ -65,9 +73,52 @@ final class MissionManager implements MissionManagerInterface
         $this->em->flush();
     }
 
-    public function acceptCandidacy(Mission $mission, Candidacy $candidacy): void {}
+    public function acceptCandidacy(Mission $mission, Candidacy $candidacy, User $currentUser): void
+    {
+        if ($currentUser !== $mission->getClient()) {
+            throw new \InvalidArgumentException("Cet utilisateur n'a pas les permissions nécessaire pour réaliser cette action.");
+        }
+        $pendingStatus = $this->missionStatusRepository->findOneByCode(MissionStatusEnum::PENDING->value);
+        if (!$mission->getStatus() === $pendingStatus) {
+            throw new \LogicException("Impossible d'accepter une candidature sur cette mission.");
+        }
+        $inProgressStatus = $this->missionStatusRepository->findOneByCode(MissionStatusEnum::IN_PROGRESS->value);
 
-    public function refuseCandidacy(Mission $mission, Candidacy $candidacy): void {}
+        $allCandidacies = $mission->getCandidacies();
+        foreach ($allCandidacies as $_candidacy) {
+            if ($_candidacy == $candidacy) {
+                $this->candidacyManager->toggleCandidacyStatus($_candidacy, CandidacyStatusEnum::ACCEPTED);
+
+                $acceptedMessage = "Votre candidature pour la mission " . $mission->getTitle() . " a été acceptée !";
+                $this->notificationManager->send($mission->getClient(), $_candidacy->getFreelance(), $acceptedMessage);
+                continue;
+            }
+            if ($_candidacy->getStatus()->getCode() === CandidacyStatusEnum::PENDING) {
+                $this->candidacyManager->toggleCandidacyStatus($_candidacy, CandidacyStatusEnum::REFUSED);
+                $refusedMessage = "Votre candidature pour la mission " . $mission->getTitle() . " a été refusée.";
+                $this->notificationManager->send($mission->getClient(), $_candidacy->getFreelance(), $refusedMessage);
+            }
+        }
+        $mission->setFreelance($candidacy->getFreelance());
+        $mission->setStatus($inProgressStatus);
+        $this->em->persist($mission);
+        $this->em->flush();
+    }
+
+    public function refuseCandidacy(Mission $mission, Candidacy $candidacy, User $currentUser): void
+    {
+        if ($currentUser !== $mission->getClient()) {
+            throw new \InvalidArgumentException("Cet utilisateur n'a pas les permissions nécessaire pour réaliser cette action.");
+        }
+        $pendingStatus = $this->missionStatusRepository->findOneByCode(MissionStatusEnum::PENDING->value);
+        if (!$mission->getStatus() === $pendingStatus) {
+            throw new \LogicException("Impossible de refuser une candidature sur cette mission. Si le problème persiste, merci de contacter un administrateur.");
+        }
+
+        $this->candidacyManager->toggleCandidacyStatus($candidacy, CandidacyStatusEnum::REFUSED);
+        $refusedMessage = "Votre candidature pour la mission " . $mission->getTitle() . " a été refusée.";
+        $this->notificationManager->send($mission->getClient(), $candidacy->getFreelance(), $refusedMessage);
+    }
 
     public function delete(Mission $mission): void
     {
