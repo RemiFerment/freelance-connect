@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: MissionRepository::class)]
 class Mission
@@ -14,21 +15,25 @@ class Mission
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['mission:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['mission:read'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups(['mission:read'])]
     private ?float $budget = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $deadline = null;
 
     #[ORM\Column(options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[Groups(['mission:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(options: ["default" => "CURRENT_TIMESTAMP"])]
@@ -44,12 +49,14 @@ class Mission
     private ?MissionStatus $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'missions')]
+    #[Groups(['mission:read'])]
     private ?Language $language = null;
 
     /**
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'missions')]
+    #[Groups(['mission:read'])]
     private Collection $categories;
 
     /**
