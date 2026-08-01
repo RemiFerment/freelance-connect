@@ -88,7 +88,7 @@ final class ClientController extends AbstractController
     {
         if ($this->getUser() !== $mission->getClient()) {
             $this->addFlash("warning", "Vous ne pouvez pas accéder à cette ressource. (403)");
-            return $this->redirectToRoute('app_client_index', [], Response::HTTP_FORBIDDEN);
+            return $this->redirectToRoute('app_client_index');
         }
         if ($this->isCsrfTokenValid('cancel' . $mission->getId(), $request->getPayload()->getString('_token'))) {
             $missionManager->cancel($mission, $this->getUser());
