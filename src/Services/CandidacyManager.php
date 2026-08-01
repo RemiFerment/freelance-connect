@@ -82,11 +82,12 @@ class CandidacyManager implements CandidacyManagerInterface
         $this->em->flush();
     }
 
-    public function getCvFile(Candidacy $candidacy, User $currentUser): string
+    public function getCvFile(Candidacy $candidacy, ?User $currentUser): string
     {
-        if ($currentUser !== $candidacy->getMission()->getClient() || $currentUser !== $candidacy->getFreelance()) {
+        if ($currentUser !== $candidacy->getMission()->getClient() && $currentUser !== $candidacy->getFreelance()) {
             throw new \InvalidArgumentException("Vous ne pouvez pas accéder à cette ressource.");
         }
+        dd($currentUser);
         $fileSystem = new Filesystem();
 
         $filePath = $candidacy->getCvFilePath();

@@ -110,7 +110,7 @@ final class ClientController extends AbstractController
     public function showApplies(MissionRepository $missionRep, MissionStatusRepository $missionStatusRep): Response
     {
         return $this->render('client/candidacy/show_candidacies_per_mission.html.twig', [
-            'missions' => $missionRep->findAllMissionsByStatus($this->getUser(), [$missionStatusRep->findOneByCode(MissionStatusEnum::PENDING->value)])
+            'missions' => $missionRep->findAllMissionsByStatus($this->getUser(), [$missionStatusRep->findOneByCode(MissionStatusEnum::PENDING->value), $missionStatusRep->findOneByCode(MissionStatusEnum::IN_PROGRESS->value)])
         ]);
     }
 }
