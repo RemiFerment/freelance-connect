@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Missions - Administration{% endblock %}
+
+{% block body %}
+
+<div class="container py-5">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <div>
+                <h1 class="m-0 fw-bold">
+                    Gestion des missions
+                </h1>
+                <p class="text-muted mb-0">
+                    Filtrez et modérez les missions de la plateforme.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    {% include 'admin/_missions_filter.html.twig' %}
+
+    {% if missions is empty %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            Aucune mission à afficher.
+        </div>
+    {% else %}
+
+        <div class="row g-4">
+            {% for mission in missions %}
+                <div class="col-12">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title">
+                                    {{ mission.title }}
+                                </h5>
+                                <span class="badge bg-secondary">
+                                    {{ mission.status.code }}
+                                </span>
+                            </div>
+                            <p class="card-text">
+                                {{ mission.description }}
+                            </p>
+                            <p>
+                                <strong>Client :</strong>
+                                {{ mission.client.firstname }}
+                                {{ mission.client.lastname }}
+                            </p>
+                            <p>
+                                <strong>Freelance :</strong>
+                                {% set acceptedCandidacy = null %}
+                                {% for candidacy in mission.candidacies %}
+                                    {% if candidacy.status.code == 'ACCEPTED' %}
+                                        {% set acceptedCandidacy = candidacy %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if acceptedCandidacy %}
+                                    {{ acceptedCandidacy.freelance.firstname }}
+                                    {{ acceptedCandidacy.freelance.lastname }}
+                                {% else %}
+                                    <span class="text-muted">
+                                        Aucun freelance associé
+                                    </span>
+                                {% endif %}
+                            </p>
+                            <p>
+                                <strong>Budget :</strong>
+                                <span class="badge bg-info">
+                                    {{ mission.budget }} €
+                                </span>
+                            </p>
+                            <p>
+                                <strong>Créée le :</strong>
+                                {{ mission.createdAt|date('d/m/Y') }}
+                            </p>
+                            <p>
+                                <strong>Catégories :</strong>
+                                {% for category in mission.categories %}
+                                    <span class="badge bg-info text-dark me-1">
+                                        {{ category.label }}
+                                    </span>
+                                {% endfor %}
+                            </p>
+                            <div class="d-flex gap-2 mt-3 justify-content-end">
+                                {% include 'admin/_delete.html.twig' with {mission: mission} %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
