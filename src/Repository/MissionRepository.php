@@ -111,6 +111,55 @@ class MissionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findAllFiltered(array $filters = []): array
+    {
+        $qb = $this->createQueryBuilder('m');
+
+        if (!empty($filters['client'])) {
+            $qb->andWhere('m.client = :client')
+                ->setParameter('client', $filters['client']);
+        }
+
+        if (!empty($filters['freelance'])) {
+            $qb->join('m.candidacies', 'c')
+                ->andWhere('c.freelance = :freelance')
+                ->setParameter('freelance', $filters['freelance']);
+        }
+
+        if (!empty($filters['categories'])) {
+            $qb->join('m.categories', 'cat')
+                ->andWhere("cat IN (:categories)")
+                ->setParameter("categories", $filters['categories']);
+        }
+
+        if (!empty($filters['startDate'])) {
+            $qb->andWhere('m.createdAt >= :startDate')
+                ->setParameter('startDate', $filters['startDate']);
+        }
+
+        if (!empty($filters['endDate'])) {
+            $qb->andWhere('m.createdAt <= :endDate')
+                ->setParameter('endDate', $filters['endDate']);
+        }
+
+        if (!empty($filters['minBudget'])) {
+            $qb->andWhere('m.budget >= :minBudget')
+                ->setParameter('minBudget', $filters['minBudget']);
+        }
+
+         if (!empty($filters['maxBudget'])) {
+            $qb->andWhere('m.budget <= :maxBudget')
+                ->setParameter('maxBudget', $filters['maxBudget']);
+        }
+
+        $qb->distinct();
+
+        return $qb
+            ->orderBy('m.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Mission[] Returns an array of Mission objects
     //     */

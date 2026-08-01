@@ -24,6 +24,4 @@ interface CandidacyManagerInterface
      * 
      */
     public function toggleCandidacyStatus(Candidacy $candidacy, CandidacyStatusEnum $newStatus): void;
-
-    public function getCvFile(Candidacy $candidacy, User $currentUser): void;
 }
