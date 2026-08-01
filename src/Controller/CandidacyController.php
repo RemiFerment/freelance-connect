@@ -3,9 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Candidacy;
+use App\Interfaces\CandidacyManagerInterface;
 use App\Interfaces\MissionManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -52,6 +56,21 @@ final class CandidacyController extends AbstractController
         } catch (\LogicException $e) {
             $this->addFlash("danger", $e->getMessage());
             return $this->redirectToRoute('app_client_index', [], Response::HTTP_SEE_OTHER);
+        }
+    }
+
+    #[Route('/candidacy/file/{id}', name: 'app_candidacy_file')]
+    public function getCvFileFromCandidacy(Candidacy $candidacy, CandidacyManagerInterface $candidacyManager): Response
+    {
+        try {
+            $file = $candidacyManager->getCvFile($candidacy, $this->getUser());
+
+            $filename = 'CV_candidature_' . $candidacy->getFreelance()->getFirstname() . "_" . $candidacy->getFreelance()->getLastname() . '.pdf';
+
+            return $this->file($file, $filename, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
+        } catch (\InvalidArgumentException | FileNotFoundException $e) {
+            $this->addFlash("danger", $e->getMessage());
+            return $this->redirectToRoute('app_home');
         }
     }
 }

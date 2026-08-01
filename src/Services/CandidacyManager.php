@@ -12,10 +12,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Enum\CandidacyStatusEnum;
 use App\Repository\CandidacyStatusRepository;
 use App\Enum\MissionStatusEnum;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Mime\Part\File;
 use UnexpectedValueException;
 
 class CandidacyManager implements CandidacyManagerInterface
@@ -78,5 +80,20 @@ class CandidacyManager implements CandidacyManagerInterface
 
         $this->em->persist($candidacy);
         $this->em->flush();
+    }
+
+    public function getCvFile(Candidacy $candidacy, ?User $currentUser): string
+    {
+        if ($currentUser !== $candidacy->getMission()->getClient() && $currentUser !== $candidacy->getFreelance()) {
+            throw new \InvalidArgumentException("Vous ne pouvez pas accéder à cette ressource.");
+        }
+        dd($currentUser);
+        $fileSystem = new Filesystem();
+
+        $filePath = $candidacy->getCvFilePath();
+        if (!$fileSystem->exists($filePath)) {
+            throw new FileNotFoundException("Impossible de charger le fichier.");
+        }
+        return $filePath;
     }
 }
