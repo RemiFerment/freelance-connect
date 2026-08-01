@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Candidacy;
+use App\Interfaces\CandidacyManagerInterface;
 use App\Interfaces\MissionManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -52,6 +55,21 @@ final class CandidacyController extends AbstractController
         } catch (\LogicException $e) {
             $this->addFlash("danger", $e->getMessage());
             return $this->redirectToRoute('app_client_index', [], Response::HTTP_SEE_OTHER);
+        }
+    }
+
+    #[Route('/candidacy/file/{id}', name: 'app_candidacy_file')]
+    public function getCvFileFromCandidacy(Candidacy $candidacy, CandidacyManagerInterface $candidacyManager): ?BinaryFileResponse
+    {
+        try {
+            $file = $candidacyManager->getCvFile($candidacy, $this->getUser());
+            return new BinaryFileResponse($file);
+        } catch (\InvalidArgumentException $e) {
+            $this->addFlash("danger", $e->getMessage());
+            return null;
+        } catch (FileNotFoundException $e) {
+            $this->addFlash("danger", $e->getMessage());
+            return null;
         }
     }
 }

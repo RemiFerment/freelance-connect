@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\Mission;
 use App\Enum\CandidacyStatusEnum;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Mime\Part\File;
 
 interface CandidacyManagerInterface
 {
@@ -25,5 +26,5 @@ interface CandidacyManagerInterface
      */
     public function toggleCandidacyStatus(Candidacy $candidacy, CandidacyStatusEnum $newStatus): void;
 
-    public function getCvFile(Candidacy $candidacy, User $currentUser): void;
+    public function getCvFile(Candidacy $candidacy, User $currentUser): string;
 }

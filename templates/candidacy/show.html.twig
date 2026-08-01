@@ -78,8 +78,8 @@
 							</label>
 							<p>
 								{% if candidacy.cvFilePath %}
-									{# A faire #}
-									<a href="#" class="btn btn-sm btn-outline-secondary">Télécharger le CV</a>
+									<a href="{{path(app_candidacy_file, {id:candidacy.id})}}" target="_blank" class="btn btn-sm btn-outline-secondary">Télécharger le CV</a>
+
 								{% else %}
 									<span class="text-muted">Aucun CV fourni</span>
 								{% endif %}
