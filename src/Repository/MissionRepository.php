@@ -160,6 +160,21 @@ class MissionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findRecentOpenMissions(): array
+{
+    return $this->createQueryBuilder('m')
+        ->addSelect('c', 'l')
+        ->leftJoin('m.categories', 'c')
+        ->leftJoin('m.language', 'l')
+        ->join('m.status', 's')
+        ->andWhere('s.code = :status')
+        ->setParameter('status', MissionStatusEnum::PENDING->value)
+        ->orderBy('m.createdAt', 'DESC')
+        ->setMaxResults(5)
+        ->getQuery()
+        ->getResult();
+}
+
     //    /**
     //     * @return Mission[] Returns an array of Mission objects
     //     */
