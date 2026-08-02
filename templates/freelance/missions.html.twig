@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Missions{% endblock %}
+
+{% block body %}
+
+<div class="container">
+
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+
+        <h1 class="m-0">Missions</h1>
+    </div>
+
+
+    <ul class="nav nav-pills mb-4" id="missions-tab" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active"
+                    data-bs-toggle="pill"
+                    data-bs-target="#open-missions"
+                    type="button">
+                Missions disponibles
+            </button>
+        </li>
+
+        <li class="nav-item">
+            <button class="nav-link"
+                    data-bs-toggle="pill"
+                    data-bs-target="#completed-missions"
+                    type="button">
+                Missions terminées
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="open-missions">
+            {% include 'freelance/_open_missions.html.twig' %}
+        </div>
+
+
+        <div class="tab-pane fade" id="completed-missions">
+            {% include 'freelance/_completed_missions.html.twig' %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

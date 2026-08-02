@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Mission
+{% endblock %}
+
+{% block body %}
+	<div class="d-flex align-items-center justify-content-between mb-4">
+		<div class="d-flex align-items-center gap-2 mb-4">
+			<button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+				<i class="bi bi-chevron-left"></i>
+			</button>
+			<h1 class="mb-0">Mes missions</h1>
+		</div>
+		<a class="btn btn-success" href="{{ path('app_client_new') }}">
+			<i class="bi bi-plus-circle"></i>
+			Nouvelle Mission
+		</a>
+	</div>
+
+	{% if missions %}
+		<div class="table-responsive">
+			<table class="table table-hover table-striped">
+				<thead class="table-dark">
+					<tr>
+						<th>Id</th>
+						<th>Titre</th>
+						<th>Budget</th>
+						<th>Délai</th>
+						<th>Dernière modification</th>
+						<th>Status</th>
+						<th class="text-center">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for mission in missions %}
+						<tr>
+							<td>
+								<span class="badge bg-secondary">{{ mission.id }}</span>
+							</td>
+							<td class="fw-semibold">{{ mission.title }}</td>
+							<td>
+								<span class="badge bg-dark-subtle text-white">{{ mission.budget }}
+
+									€</span>
+							</td>
+							<td>{{ mission.deadline ? mission.deadline|date('d/m/Y') : '-' }}</td>
+							<td>
+								<small class="text-muted">{{ mission.updatedAt ? mission.updatedAt|date('d/m/Y H:i') : '-' }}</small>
+							</td>
+							<td>
+								<span class="badge bg-{{ mission.status.code == 'COMPLETED' ? 'success' : 'secondary' }}">
+									{{ mission.status.label|capitalize }}
+								</span>
+							</td>
+							<td>
+								<div class="d-flex gap-2 justify-content-center">
+									<a class="btn btn-sm btn-outline-secondary" href="{{ path('app_client_show', {'id': mission.id}) }}" title="Regarder">
+										<i class="bi bi-eye-fill fs-5"></i>
+									</a>
+									<a class="btn btn-sm btn-outline-primary" href="{{ path('app_client_edit', {'id': mission.id}) }}" title="Modifier">
+										<i class="bi bi-pencil-fill fs-5"></i>
+									</a>
+								</div>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else %}
+		<div class="alert alert-info text-center" role="alert">
+			<i class="bi bi-info-circle"></i>
+			Aucune mission à afficher.
+		</div>
+	{% endif %}
+{% endblock %}

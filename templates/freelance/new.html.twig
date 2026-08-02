@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Candidater -
+	{{ mission.title }}
+{% endblock %}
+
+{% block body %}
+
+	<div class="d-flex justify-content-center align-items-center p-3">
+		<div class="w-100" style="max-width: 600px;">
+			<div class="card shadow-lg border-0 rounded-3">
+				<div class="card-header bg-dark-subtle text-white rounded-top-3 p-2">
+					<h1 class="text-center mb-0">
+						Candidater
+					</h1>
+				</div>
+				<div class="card-body p-4">
+
+					<h5 class="text-center text-muted mb-4">
+						{{ mission.title }}
+					</h5>
+
+					{{ form_errors(form, { 'attr': { 'class': 'alert alert-danger border-0 rounded-2' }}) }}
+
+
+					{{ form_start(form, { 'attr': { 'class': 'needs-validation','novalidate': 'novalidate'} }) }}
+
+
+					{{ form_row(form.motivation, {'attr': {'class': 'form-control rounded-2'}}) }}
+
+
+					{{ form_row(form.cvFilePath, {'attr': {'class': 'form-control rounded-2'}}) }}
+
+
+					{{ form_row(form.projectLinks, {'attr': {'class': 'form-control rounded-2'}}) }}
+
+
+					<button type="submit" class="btn btn-primary w-100 mt-4 rounded-2 fw-bold">
+						Envoyer ma candidature
+					</button>
+
+
+					{{ form_end(form) }}
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

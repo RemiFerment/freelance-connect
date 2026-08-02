@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mission
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+		<div class="d-flex align-items-center gap-2 mb-4">
+			<button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+				<i class="bi bi-chevron-left"></i>
+			</button>
+
+			<h1 class="mb-0">{{ mission.title }}</h1>
+		</div>
+
+		<div class="card shadow-sm">
+			<div class="card-body">
+				<h5 class="card-title mb-4">Détails de la mission</h5>
+				<table class="table table-borderless mb-0">
+					<tbody>
+						<tr>
+							<th class="ps-0 text-secondary">Titre</th>
+							<td class="pe-0">{{ mission.title }}</td>
+						</tr>
+						<tr>
+							<th class="ps-0 text-secondary">Description</th>
+							<td class="pe-0">{{ mission.description }}</td>
+						</tr>
+						<tr>
+							<th class="ps-0 text-secondary">Budget</th>
+							<td class="pe-0">
+								{{ mission.budget }}
+								€
+							</td>
+						</tr>
+                        <th class="ps-0 text-secondary">Langue</th>
+							<td class="pe-0">
+								{{ mission.language.label }}
+							</td>
+						<tr>
+							<th class="ps-0 text-secondary">Catégories</th>
+							<td class="pe-0">
+								{% for category in mission.categories %}
+									<span class="badge fs-6 bg-info text-dark me-1">
+										{{ category.label }}
+									</span>
+								{% endfor %}
+							</td>
+						</tr>
+						<tr>
+							<th class="ps-0 text-secondary">Délai</th>
+							<td class="pe-0">{{ mission.deadline ? mission.deadline|date('Y-m-d') : 'N/A' }}</td>
+						</tr>
+						<tr>
+							<th class="ps-0 text-secondary">Créé le</th>
+							<td class="pe-0">
+								<small class="text-muted">{{ mission.createdAt ? mission.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</small>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="d-flex gap-2 mt-4 flex-wrap">
+			<a class="btn btn-secondary" href="{{ path('app_freelance_missions') }}">
+				<i class="bi bi-arrow-left"></i>
+				Retour
+			</a>
+
+			<a class="btn btn-primary" href="{{ path('app_freelance_apply', {'id': mission.id}) }}">
+				<i class="bi bi-pencil-fill"></i>
+				Postuler
+			</a>
+
+		</div>
+	</div>
+
+{% endblock %}

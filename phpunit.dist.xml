@@ -15,11 +15,25 @@
         <ini name="error_reporting" value="-1" />
         <server name="APP_ENV" value="test" force="true" />
         <server name="SHELL_VERBOSITY" value="-1" />
+
+        <!-- ###+ doctrine/mongodb-odm-bundle ### -->
+        <!-- Format described at https://www.mongodb.com/docs/php-library/current/connect/connection-options/ -->
+        <!-- MONGODB_URI="mongodb://username:password@localhost:27017/?authSource=auth-db" -->
+        <!-- MONGODB_URI="mongodb+srv://username:password@YOUR_CLUSTER_NAME.YOUR_HASH.mongodb.net/?retryWrites=true&w=majority" -->
+        <env name="MONGODB_URI" value="mongodb://localhost:27017"/>
+        <env name="MONGODB_DB" value="symfony"/>
+        <!-- ###- doctrine/mongodb-odm-bundle ### -->
     </php>
 
     <testsuites>
-        <testsuite name="Project Test Suite">
-            <directory>tests</directory>
+        <testsuite name="unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="integration">
+            <directory>tests/Integration</directory>
+        </testsuite>
+        <testsuite name="fonctional">
+            <directory>tests/Functional</directory>
         </testsuite>
     </testsuites>
 
@@ -40,5 +54,7 @@
     </source>
 
     <extensions>
+        <bootstrap class="Symfony\Component\Panther\ServerExtension" />
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
     </extensions>
 </phpunit>

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="mb-4">
+        <h1 class="fw-bold">
+            Administration 
+        </h1>
+        <p class="text-muted">
+            Gérez la plateforme FreelanceConnect.
+        </p>
+    </div>
+    <div class="row g-5 justify-content-center">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Missions
+                    </h5>
+                    <p class="card-text text-muted">
+                        Supervisez les missions publiées.
+                    </p>
+                    <a href="{{ path('app_admin_missions') }}" class="btn btn-primary">
+                        Voir les missions
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Statistiques
+                    </h5>
+                    <p class="card-text text-muted">
+                        Consultez l'activité de la plateforme.
+                    </p>
+                    <a href="{{ path('app_feature_pending', {'name': 'Statistiques'}) }}" class="btn btn-primary">
+                        Voir les statistiques
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

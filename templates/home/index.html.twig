@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="display-4">Bienvenue sur Freelance Connect</h1>
+        <p class="lead">
+            Plateforme de mise en relation entre clients et freelances.
+        </p>
+        <h2 class="mt-5 mb-4">Dernières missions disponibles</h2>
+        {% if missions is empty %}
+            <div class="alert alert-info">
+                Aucune mission disponible actuellement.
+            </div>
+        {% else %}
+            <div class="row g-4">
+                {% for mission in missions %}
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    {{ mission.title }}
+                                </h5>
+                                <p>
+                                    {{ mission.description }}
+                                </p>
+                                <p>
+                                    <strong>Budget :</strong>
+                                    {{ mission.budget }} €
+                                </p>
+                                <p>
+                                    <strong>Catégorie(s) :</strong>
+                                    {% for category in mission.categories %}
+                                        <span class="badge bg-info text-dark">
+                                            {{ category.label }}
+                                        </span>
+                                    {% endfor %}
+                                </p>
+                                {% if app.user %}
+                                    {% if is_granted('ROLE_FREELANCE') %}
+                                        <a class="btn btn-primary"
+                                        href="{{ path('app_freelance_show', {'id': mission.id}) }}">
+                                            <i class="bi bi-eye-fill"></i>
+                                            Voir la mission
+                                        </a>
+                                    {% elseif is_granted('ROLE_CLIENT') %}
+                                        <a class="btn btn-primary"
+                                        href="{{ path('app_client_show', {'id': mission.id}) }}">
+                                            <i class="bi bi-eye-fill"></i>
+                                            Voir la mission
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+                    {% if not app.user %}
+                        <div class="text-center mt-5 text-muted">
+                            <i class="bi bi-info-circle"></i>
+                            Connectez-vous pour consulter le détail des missions.
+                            <a href="{{ path('app_login') }}">Se connecter</a>
+                        </div>
+                    {% endif %}
+        {% endif %}
+    </div>
+
+{% endblock %}

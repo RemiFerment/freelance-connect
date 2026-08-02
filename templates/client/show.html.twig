@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mission
+{% endblock %}
+
+{% block body %}
+	<div class="container-fluid px-4 py-5">
+		<div class="row mb-4">
+			<div class="col-12">
+				<div class="d-flex align-items-center gap-3">
+					<button type="button" class="btn btn-outline-secondary" onclick="history.back()" title="Retour">
+						<i class="bi bi-chevron-left"></i>
+					</button>
+					<div>
+						<h1 class="mb-1 text-light fw-bold">{{ mission.title }}</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row g-4">
+			<div class="col-lg-8">
+				<div class="card shadow-lg h-100">
+					<div class="card-header bg-dark-subtle text-white border-bottom">
+						<h5 class="card-title mb-0  fw-bold">
+							<i class="bi bi-info-circle me-2"></i>Détails de la mission
+						</h5>
+					</div>
+					<div class="card-body">
+						<div class="row g-3">
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label class="form-label text-secondary small fw-semibold">Statut</label>
+									<div>
+									<span class="badge bg-secondary fs-6">
+											{{ mission.status.label }}
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label class="form-label text-secondary small fw-semibold">Budget</label>
+									<div class="fs-5 fw-bold text-success">
+										{{ mission.budget | number_format(2, '.', ',') }}€
+									</div>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-3">
+									<label class="form-label text-secondary small fw-semibold">Description</label>
+									<p class="mb-0 ">{{ mission.description }}</p>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-3">
+									<label class="form-label text-secondary small fw-semibold">Catégories</label>
+									<div>
+										{% for category in mission.categories %}
+											<span class="badge bg-info  me-2 mb-2">
+												{{ category.label }}
+											</span>
+										{% else %}
+											<span class="text-muted">Aucune catégorie</span>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label class="form-label text-secondary small fw-semibold">Délai</label>
+									<div>
+									<span class="badge bg-dark-emphasis text-warning ">
+											<i class="bi bi-calendar me-1"></i>
+											{{ mission.deadline ? mission.deadline|date('d/m/Y') : 'N/A' }}
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label class="form-label text-secondary small fw-semibold">Créé le</label>
+									<div class="small text-muted">{{ mission.createdAt ? mission.createdAt|date('d/m/Y H:i') : 'N/A' }}</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label class="form-label text-secondary small fw-semibold">Mis à jour le</label>
+									<div class="small text-muted">{{ mission.updatedAt ? mission.updatedAt|date('d/m/Y H:i') : 'N/A' }}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{% if mission.client == app.user and mission.freelance %}
+				<div class="col-lg-4">
+					<div class="card shadow-lg text-white">
+
+						<div class="card-header bg-dark-subtle text-white border-0">
+
+							<h5 class="card-title mb-0 fw-bold">
+								<i class="bi bi-person-check me-2"></i>Freelance assigné
+							</h5>
+						</div>
+						<div class="card-body bg-dark">
+							<div class="mb-3">
+								<label class="form-label small fw-semibold">Nom</label>
+								<p class="mb-0  fw-semibold">{{ mission.freelance.firstName }}
+									{{ mission.freelance.lastName }}</p>
+							</div>
+							<div class="mb-3">
+								<label class="form-label small fw-semibold">Entreprise</label>
+								<p class="mb-0 ">{{ mission.freelance.companyName }}</p>
+							</div>
+							<div class="mb-3">
+								<label class="form-label small fw-semibold">Email</label>
+								<p class="mb-0 ">
+										<a href="mailto:{{ mission.freelance.email }}" class="text-secondary">{{ mission.freelance.email }}</a>
+								</p>
+							</div>
+							<div>
+								<label class="form-label small fw-semibold">Téléphone</label>
+								<p class="mb-0 ">
+										<a href="tel:{{ mission.freelance.phone }}" class="text-secondary">{{ mission.freelance.phone }}</a>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+
+		<div class="row mt-4">
+			<div class="col-12">
+				<div class="d-flex gap-2 flex-wrap">
+					{% if mission.client == app.user %}
+						<a class="btn btn-primary d-flex align-items-center gap-2" href="{{ path('app_client_edit', {'id': mission.id}) }}">
+							<i class="bi bi-pencil-fill"></i>
+							<span>Modifier</span>
+						</a>
+						{{ include('client/_cancel_form.html.twig') }}
+					{% endif %}
+
+					{% if is_granted('ROLE_ADMIN') %}
+						{{ include('client/_delete_form.html.twig') }}
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
