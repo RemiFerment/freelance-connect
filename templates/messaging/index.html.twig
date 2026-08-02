@@ -1,144 +1,161 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Messagerie{% endblock %}
-
-{% block body %}
-<div class="container-fluid card shadow-sm rounded-3 p-0 overflow-hidden" style="height: 500px;">
-    <div class="row h-100 g-0 overflow-hidden">
-        <!-- Conversations List -->
-        <div class="col-12 col-md-4 border-end border-dark d-none d-md-flex flex-column" style="max-height: 500px; overflow-y: auto;">
-            <div class="p-3 border-bottom border-dark">
-                <h5 class="mb-0">Messages</h5>
-            </div>
-
-            {% for message in app.flashes('error') %}
-                <div class="alert alert-danger m-2 py-2 small">{{ message }}</div>
-            {% endfor %}
-
-            <div class="list-group list-group-flush">
-                {% if conversations is empty %}
-                    <div class="p-4 text-muted text-center">
-                        <i class="bi bi-chat-dots fs-2"></i>
-                        <p class="mt-2 small">Aucune conversation.<br>Une mission en cours est nécessaire pour démarrer une discussion.</p>
-                    </div>
-                {% else %}
-                    {% for conversation in conversations %}
-                        {% set otherUserId = null %}
-                        {% for participantId in conversation.participantIds %}
-                            {% if participantId != currentUserId %}{% set otherUserId = participantId %}{% endif %}
-                        {% endfor %}
-                        {% set otherUser = participantsMap[otherUserId] ?? null %}
-                        {% set unread = conversation.unreadCount[currentUserId]|default(0) %}
-                        {% set isActive = activeConversation is not null and activeConversation.id == conversation.id %}
-
-                        <a href="{{ path('app_messaging_show', {id: conversation.id}) }}"
-                           class="list-group-item list-group-item-action {{ isActive ? 'active' : '' }}">
-                            <div class="d-flex align-items-center">
-                                <div class="me-2 flex-shrink-0 d-flex align-items-center bg-secondary p-3 justify-content-center fw-bold rounded-circle avatar-md">
-                                    {% if otherUser %}{{ otherUser.firstname|first|upper }}{{ otherUser.lastname|first|upper }}{% else %}?{% endif %}
-                                </div>
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <strong class="text-truncate">
-                                            {% if otherUser %}{{ otherUser.firstname }} {{ otherUser.lastname }}{% else %}Utilisateur inconnu{% endif %}
-                                        </strong>
-                                        <small class="text-muted ms-2 flex-shrink-0">{{ conversation.updatedAt|date('d/m H:i') }}</small>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted text-truncate">{{ conversation.lastMessageText|default('Nouvelle conversation') }}</small>
-                                        {% if unread > 0 %}
-                                            <span class="badge bg-primary ms-1">{{ unread }}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    {% endfor %}
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Chat Area -->
-        <div class="col-md-8 d-flex flex-column" style="max-height: 500px; overflow-y: auto;">
-            {% if activeConversation is not null %}
-                {% set otherUserId = null %}
-                {% for participantId in activeConversation.participantIds %}
-                    {% if participantId != currentUserId %}{% set otherUserId = participantId %}{% endif %}
-                {% endfor %}
-                {% set otherUser = participantsMap[otherUserId] ?? null %}
-
-                <!-- Header -->
-                <div class="p-3 border-bottom border-dark flex-shrink-0">
-                    <div class="d-flex align-items-center">
-                        <div class="me-2 flex-shrink-0 d-flex align-items-center bg-secondary p-3 justify-content-center fw-bold rounded-circle avatar-md">
-                            {% if otherUser %}{{ otherUser.firstname|first|upper }}{{ otherUser.lastname|first|upper }}{% else %}?{% endif %}
-                        </div>
-                        <div>
-                            <h6 class="mb-0">
-                                {% if otherUser %}{{ otherUser.firstname }} {{ otherUser.lastname }}{% else %}Utilisateur inconnu{% endif %}
-                            </h6>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Messages -->
-                <div class="flex-grow-1 overflow-y-auto p-3 p-md-4 d-flex flex-column" id="messages-container">
-                    {% if messages is empty %}
-                        <div class="text-center text-muted py-5 m-auto">
-                            <i class="bi bi-chat fs-2"></i>
-                            <p class="mt-2 small">Aucun message. Commencez la conversation !</p>
-                        </div>
-                    {% endif %}
-                    {% for message in messages %}
-                        {% set isOwn = message.senderId == currentUserId %}
-                        {% set sender = participantsMap[message.senderId] ?? null %}
-
-                        <div class="mb-2 mb-md-3 d-flex {{ isOwn ? 'justify-content-end' : '' }}">
-                            {% if not isOwn %}
-                                <div class="me-2 flex-shrink-0 d-flex bg-secondary p-2 align-items-center justify-content-center rounded-circle align-self-end avatar-sm text-muted">
-                                    {% if sender %}{{ sender.firstname|first|upper }}{{ sender.lastname|first|upper }}{% else %}?{% endif %}
-                                </div>
-                            {% endif %}
-                            <div class="message-box {{ isOwn ? 'bg-primary text-white' : 'bg-secondary-subtle' }} rounded p-2">
-                                <p class="mb-1 text-break message-content">{{ message.content }}</p>
-                                <small class="{{ isOwn ? 'opacity-75' : 'text-muted' }} message-time">{{ message.createdAt|date('H:i') }}</small>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="text-center text-muted py-5 m-auto">
-                            <i class="bi bi-chat fs-2"></i>
-                            <p class="mt-2 small">Aucun message. Commencez la conversation !</p>
-                        </div>
-                    {% endfor %}
-                    <div id="messages-end"></div>
-                </div>
-
-                <!-- Input Area -->
-                <div class="p-3 border-top border-dark flex-shrink-0">
-                    <form action="{{ path('app_messaging_send', {id: activeConversation.id}) }}" method="post" class="d-flex gap-2">
-                        <input type="hidden" name="_token" value="{{ csrf_token('send_message_' ~ activeConversation.id) }}">
-                        <input type="text" name="content" class="form-control flex-grow-1"
-                               placeholder="Écrivez votre message..." autocomplete="off">
-                        <button type="submit" class="btn btn-primary">Envoyer</button>
-                    </form>
-                </div>
-            {% else %}
-                <div class="d-flex align-items-center justify-content-center h-100 text-muted">
-                    <div class="text-center">
-                        <i class="bi bi-chat-dots fs-1 opacity-25"></i>
-                        <p class="mt-3">Sélectionnez une conversation</p>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-<script>
-    const container = document.getElementById('messages-container');
-    if (container) {
-        container.scrollTop = container.scrollHeight;
-    }
-</script>
+{% block title %}Messagerie
 {% endblock %}
 
+{% block body %}
+	<div class="container-fluid card shadow-sm rounded-3 p-0 overflow-hidden" style="height: 500px;">
+		<div
+			class="row h-100 g-0 overflow-hidden">
+			<!-- Conversations List -->
+			<div class="col-12 col-md-4 border-end border-dark bg-dark-subtle d-none d-md-flex flex-column" style="max-height: 500px; overflow-y: auto;">
+				<div class="p-3 border-bottom border-dark">
+					<h5 class="mb-0">Messages</h5>
+				</div>
+
+				{% for message in app.flashes('error') %}
+					<div class="alert alert-danger m-2 py-2 small">{{ message }}</div>
+				{% endfor %}
+
+				<div class="list-group list-group-flush">
+					{% if conversations is empty %}
+						<div class="p-4 text-muted text-center">
+							<i class="bi bi-chat-dots fs-2"></i>
+							<p class="mt-2 small">Aucune conversation.<br>Une mission en cours est nécessaire pour démarrer une discussion.</p>
+						</div>
+					{% else %}
+						{% for conversation in conversations %}
+							{% set otherUserId = null %}
+							{% for participantId in conversation.participantIds %}
+								{% if participantId != currentUserId %}
+									{% set otherUserId = participantId %}
+								{% endif %}
+							{% endfor %}
+							{% set otherUser = participantsMap[otherUserId] ?? null %}
+							{% set unread = conversation.unreadCount[currentUserId]|default(0) %}
+							{% set isActive = activeConversation is not null and activeConversation.id == conversation.id %}
+
+							<a href="{{ path('app_messaging_show', {id: conversation.id}) }}" class="list-group-item list-group-item-action {{ isActive ? 'active' : '' }}">
+								<div class="d-flex align-items-center">
+									<div class="me-2 flex-shrink-0 d-flex align-items-center bg-secondary p-3 justify-content-center fw-bold rounded-circle avatar-md">
+										{% if otherUser %}
+											{{ otherUser.firstname|first|upper }}{{ otherUser.lastname|first|upper }}{% else %}?
+										{% endif %}
+									</div>
+									<div class="flex-grow-1 overflow-hidden">
+										<div class="d-flex justify-content-between align-items-center">
+											<strong class="text-truncate">
+												{% if otherUser %}
+													{{ otherUser.firstname }}
+													{{ otherUser.lastname }}{% else %}Utilisateur inconnu
+												{% endif %}
+											</strong>
+											<small class="text-muted ms-2 flex-shrink-0">{{ conversation.updatedAt|date('d/m H:i') }}</small>
+										</div>
+										<div class="d-flex justify-content-between align-items-center">
+											<small class="text-muted text-truncate">{{ conversation.lastMessageText|default('Nouvelle conversation') }}</small>
+											{% if unread > 0 %}
+												<span class="badge bg-primary ms-1">{{ unread }}</span>
+											{% endif %}
+										</div>
+									</div>
+								</div>
+							</a>
+						{% endfor %}
+					{% endif %}
+				</div>
+			</div>
+
+			<!-- Chat Area -->
+			<div class="col-md-8 d-flex flex-column" style="max-height: 500px; overflow-y: auto;">
+				{% if activeConversation is not null %}
+					{% set otherUserId = null %}
+					{% for participantId in activeConversation.participantIds %}
+						{% if participantId != currentUserId %}
+							{% set otherUserId = participantId %}
+						{% endif %}
+					{% endfor %}
+					{% set otherUser = participantsMap[otherUserId] ?? null %}
+
+					<!-- Header -->
+					<div class="p-3 border-bottom border-dark flex-shrink-0">
+						<div class="d-flex align-items-center">
+							<div class="me-2 flex-shrink-0 d-flex align-items-center bg-secondary p-3 justify-content-center fw-bold rounded-circle avatar-md">
+								{% if otherUser %}
+									{{ otherUser.firstname|first|upper }}{{ otherUser.lastname|first|upper }}{% else %}?
+								{% endif %}
+							</div>
+							<div>
+								<h6 class="mb-0">
+									{% if otherUser %}
+										{{ otherUser.firstname }}
+										{{ otherUser.lastname }}{% else %}Utilisateur inconnu
+									{% endif %}
+								</h6>
+							</div>
+						</div>
+					</div>
+
+					<!-- Messages -->
+					<div class="flex-grow-1 overflow-y-auto p-3 p-md-4 d-flex flex-column" id="messages-container">
+						{% if messages is empty %}
+							<div class="text-center text-muted py-5 m-auto">
+								<i class="bi bi-chat fs-2"></i>
+								<p class="mt-2 small">Aucun message. Commencez la conversation !</p>
+							</div>
+						{% endif %}
+						{% for message in messages %}
+							{% set isOwn = message.senderId == currentUserId %}
+							{% set sender = participantsMap[message.senderId] ?? null %}
+
+							<div class="mb-2 mb-md-3 d-flex {{ isOwn ? 'justify-content-end' : '' }}">
+								{% if not isOwn %}
+									<div class="me-2 flex-shrink-0 d-flex bg-secondary p-2 align-items-center justify-content-center rounded-circle align-self-end avatar-sm text-muted">
+										{% if sender %}
+											{{ sender.firstname|first|upper }}{{ sender.lastname|first|upper }}{% else %}?
+										{% endif %}
+									</div>
+								{% endif %}
+								<div class="message-box {{ isOwn ? 'bg-primary text-white' : 'bg-secondary-subtle' }} rounded p-2">
+									<p class="mb-1 text-break message-content">{{ message.content }}</p>
+									<small class="{{ isOwn ? 'opacity-75' : 'text-muted' }} message-time">{{ message.createdAt|date('H:i') }}</small>
+								</div>
+							</div>
+						{% else %}
+							<div class="text-center text-muted py-5 m-auto">
+								<i class="bi bi-chat fs-2"></i>
+								<p class="mt-2 small">Aucun message. Commencez la conversation !</p>
+							</div>
+						{% endfor %}
+						<div id="messages-end"></div>
+					</div>
+
+					<!-- Input Area -->
+					<div class="p-3 border-top border-dark flex-shrink-0">
+						<form action="{{ path('app_messaging_send', {id: activeConversation.id}) }}" method="post" class="d-flex gap-2">
+							<input type="hidden" name="_token" value="{{ csrf_token('send_message_' ~ activeConversation.id) }}">
+							<input type="text" name="content" class="form-control flex-grow-1" placeholder="Écrivez votre message..." autocomplete="off">
+							<button type="submit" class="btn btn-primary">Envoyer</button>
+						</form>
+					</div>
+				{% else %}
+					<div class="d-flex align-items-center justify-content-center h-100 text-muted">
+						<div class="text-center">
+							<i class="bi bi-chat-dots fs-1 opacity-25"></i>
+							<p class="mt-3">Sélectionnez une conversation</p>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+
+	{% block javascripts %}
+		<script defer>
+			const container = document.getElementById('messages-container');
+if (container) {
+container.scrollTop = container.scrollHeight;
+}
+		</script>
+	{% endblock %}
+{% endblock %}
