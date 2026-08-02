@@ -87,7 +87,6 @@ class CandidacyManager implements CandidacyManagerInterface
         if ($currentUser !== $candidacy->getMission()->getClient() && $currentUser !== $candidacy->getFreelance()) {
             throw new \InvalidArgumentException("Vous ne pouvez pas accéder à cette ressource.");
         }
-        dd($currentUser);
         $fileSystem = new Filesystem();
 
         $filePath = $candidacy->getCvFilePath();
