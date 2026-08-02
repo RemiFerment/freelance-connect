@@ -15,18 +15,20 @@ class MissionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title')
-            ->add('description')
-            ->add('budget')
-            ->add('deadline')
+            ->add('title', options: ['label' => 'Titre'])
+            ->add('description', options: ['label' => 'Description'])
+            ->add('budget', options: ['label' => 'Budget'])
+            ->add('deadline', options: ['label' => 'Date limite'])
             ->add('language', EntityType::class, [
                 'class' => Language::class,
                 'choice_label' => 'label',
+                'label' => 'Langue',
             ])
             ->add('categories', EntityType::class, [
                 'class' => Category::class,
                 'choice_label' => 'label',
                 'multiple' => true,
+                'label' => 'Catégories',
             ])
         ;
     }

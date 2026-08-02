@@ -50,12 +50,12 @@ class MissionRepository extends ServiceEntityRepository
     public function findOpenMissions(): array
     {
         return $this->createQueryBuilder('m')
-        ->join('m.status', 's')
-        ->andWhere('s.code = :status')
-        ->setParameter('status', MissionStatusEnum::PENDING->value)
-        ->orderBy('m.createdAt', 'DESC')
-        ->getQuery()
-        ->getResult();
+            ->join('m.status', 's')
+            ->andWhere('s.code = :status')
+            ->setParameter('status', MissionStatusEnum::PENDING->value)
+            ->orderBy('m.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
     public function findOpenMissionsFiltered(array $filters = []): array
@@ -81,7 +81,7 @@ class MissionRepository extends ServiceEntityRepository
                 ->setParameter('minBudget', $filters['minBudget']);
         }
 
-         if (!empty($filters['maxBudget'])) {
+        if (!empty($filters['maxBudget'])) {
             $qb->andWhere('m.budget <= :maxBudget')
                 ->setParameter('maxBudget', $filters['maxBudget']);
         }
@@ -147,7 +147,7 @@ class MissionRepository extends ServiceEntityRepository
                 ->setParameter('minBudget', $filters['minBudget']);
         }
 
-         if (!empty($filters['maxBudget'])) {
+        if (!empty($filters['maxBudget'])) {
             $qb->andWhere('m.budget <= :maxBudget')
                 ->setParameter('maxBudget', $filters['maxBudget']);
         }
@@ -161,42 +161,31 @@ class MissionRepository extends ServiceEntityRepository
     }
 
     public function findRecentOpenMissions(): array
-{
-    return $this->createQueryBuilder('m')
-        ->addSelect('c', 'l')
-        ->leftJoin('m.categories', 'c')
-        ->leftJoin('m.language', 'l')
-        ->join('m.status', 's')
-        ->andWhere('s.code = :status')
-        ->setParameter('status', MissionStatusEnum::PENDING->value)
-        ->orderBy('m.createdAt', 'DESC')
-        ->setMaxResults(5)
-        ->getQuery()
-        ->getResult();
-}
+    {
+        return $this->createQueryBuilder('m')
+            ->addSelect('c', 'l')
+            ->leftJoin('m.categories', 'c')
+            ->leftJoin('m.language', 'l')
+            ->join('m.status', 's')
+            ->andWhere('s.code = :status')
+            ->setParameter('status', MissionStatusEnum::PENDING->value)
+            ->orderBy('m.createdAt', 'DESC')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    /**
-    //     * @return Mission[] Returns an array of Mission objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('m.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Mission
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findMissionBetweenUsers(User $user1, User $user2): ?Mission
+    {
+        return $this->createQueryBuilder('m')
+            ->join('m.status', 's')
+            ->andWhere('s.code IN (:statuses)')
+            ->setParameter('statuses', [MissionStatusEnum::IN_PROGRESS->value, MissionStatusEnum::COMPLETED->value])
+            ->andWhere('(m.client = :user1 AND m.freelance = :user2) OR (m.client = :user2 AND m.freelance = :user1)')
+            ->setParameter('user1', $user1)
+            ->setParameter('user2', $user2)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

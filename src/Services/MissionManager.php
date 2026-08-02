@@ -11,6 +11,7 @@ use App\Interfaces\CandidacyManagerInterface;
 use App\Interfaces\MissionManagerInterface;
 use App\Interfaces\NotificationManagerInterface;
 use App\Repository\MissionStatusRepository;
+use App\Services\MessagingService;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class MissionManager implements MissionManagerInterface
@@ -19,7 +20,8 @@ final class MissionManager implements MissionManagerInterface
         private EntityManagerInterface $em,
         private MissionStatusRepository $missionStatusRepository,
         private NotificationManagerInterface $notificationManager,
-        private CandidacyManagerInterface $candidacyManager
+        private CandidacyManagerInterface $candidacyManager,
+        private MessagingService $messagingService,
     ) {}
 
     public function create(Mission $mission, User $currentUser): void
@@ -103,6 +105,8 @@ final class MissionManager implements MissionManagerInterface
         $mission->setStatus($inProgressStatus);
         $this->em->persist($mission);
         $this->em->flush();
+
+        $this->messagingService->findOrCreateConversation($mission->getClient(), $mission->getFreelance());
     }
 
     public function refuseCandidacy(Mission $mission, Candidacy $candidacy, User $currentUser): void
