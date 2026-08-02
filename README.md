@@ -1,6 +1,6 @@
 # FreelanceConnect
 
-##  Présentation
+## Présentation
 
 **FreelanceConnect** est une plateforme web mettant en relation des clients et des freelances.
 
@@ -15,7 +15,7 @@ Développée dans le cadre d'un **Minimum Viable Product (MVP)**, l'application 
 
 ---
 
-#  Technologies utilisées
+# Technologies utilisées
 
 - PHP 8.4
 - Symfony 7
@@ -30,7 +30,7 @@ Développée dans le cadre d'un **Minimum Viable Product (MVP)**, l'application 
 
 ---
 
-#  Prérequis
+# Prérequis
 
 Avant de lancer le projet, assurez-vous d'avoir installé :
 
@@ -42,7 +42,7 @@ Avant de lancer le projet, assurez-vous d'avoir installé :
 
 ---
 
-#  Installation
+# Installation
 
 ### Cloner le dépôt
 
@@ -59,7 +59,7 @@ composer install
 
 ---
 
-#  Configuration
+# Configuration
 
 Créer un fichier `.env` à la racine du projet.
 
@@ -73,7 +73,7 @@ Remplacer les valeurs par celles correspondant à votre environnement local.
 
 ---
 
-#  Bases de données
+# Bases de données
 
 L'application utilise deux systèmes de stockage :
 
@@ -102,11 +102,28 @@ php bin/console doctrine:migrations:migrate
 
 ## MongoDB
 
+### Démarrer MongoDB
 
+MongoDB est configuré via Docker Compose. Les conteneurs sont lancés avec la commande :
+
+```bash
+docker compose up -d
+```
+
+### Initialiser la connexion
+
+La connexion à MongoDB est configurée dans le fichier `.env` :
+
+```dotenv
+MONGODB_URL="mongodb://mongo:27017"
+MONGODB_DB="freelance_connect"
+```
+
+Aucune migration n'est requise pour MongoDB. Doctrine MongoDB ODM crée automatiquement les collections lors de la première utilisation.
 
 ---
 
-#  Données
+# Données
 
 Aucun jeu de données de démonstration n'est fourni.
 
@@ -116,7 +133,7 @@ Les utilisateurs peuvent créer un compte grâce à la fonctionnalité d'inscrip
 
 ---
 
-#  Lancer le projet
+# Lancer le projet
 
 Démarrer le serveur Symfony :
 
@@ -127,7 +144,8 @@ symfony server:start
 L'application sera accessible à l'adresse indiquée par Symfony CLI.
 
 ---
-#  API REST
+
+# API REST
 
 L'application expose une API REST sécurisée permettant d'accéder aux ressources principales de la plateforme.
 
@@ -142,7 +160,7 @@ Les routes privées nécessitent une authentification valide et renvoient des r�
 
 ---
 
-#  Tests
+# Tests
 
 Le projet contient une suite de tests automatisés réalisés avec **PHPUnit**.
 Les tests utilisent l'environnement Symfony `test` configuré dans le fichier `.env.test`.
@@ -163,26 +181,11 @@ php bin/phpunit
 
 Les tests permettent de vérifier le bon fonctionnement des principales fonctionnalités de l'application.
 
- ---
+---
 
- #  Post Mortem
-
-Le développement de **FreelanceConnect** a été une expérience permettant de mettre en pratique les compétences acquises durant la formation.
-
-Ce projet nous a permis de travailler sur la conception d'une application complète avec Symfony, notamment la gestion des utilisateurs, l'authentification avec différents rôles, la gestion des missions, la création d'une API REST sécurisée ainsi que l'utilisation de MySQL et MongoDB.
-
-L'une des principales difficultés rencontrées a été la gestion du temps disponible pour réaliser l'ensemble des fonctionnalités prévues dans le cahier des charges. Le choix a donc été fait de prioriser les fonctionnalités essentielles au fonctionnement du MVP afin de livrer une application stable et fonctionnelle.
-
-Certaines fonctionnalités n'ont pas pu être finalisées dans le délai imparti, notamment :
-- les statistiques côté administrateur ;
-- le service de facturation.
-
-Ces fonctionnalités restent des axes d'évolution pour une prochaine version de l'application.
-
-Ce projet a également permis d'améliorer notre organisation de travail en équipe, notamment à travers l'utilisation de Git, la gestion des branches et la répartition des tâches. Il nous a permis de mieux appréhender les contraintes d'un développement en conditions réelles et l'importance de prioriser les fonctionnalités selon les objectifs du projet.
-
-#  Auteurs
+# Auteurs
 
 Projet réalisé dans le cadre de la formation **Concepteur Développeur d'Applications (CDA)**.
+
 - Léa Brugière
 - Rémi Ferment
