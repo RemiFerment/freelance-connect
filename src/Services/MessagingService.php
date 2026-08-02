@@ -22,13 +22,12 @@ class MessagingService
 
     public function getConversationsForUser(User $user): array
     {
-        $cursor = $this->dm->createQueryBuilder(Conversation::class)
+        return $this->dm->createQueryBuilder(Conversation::class)
             ->field('participantIds')->in([(string) $user->getId()])
             ->sort('updatedAt', 'desc')
             ->getQuery()
-            ->execute();
-
-        return array_values($cursor->toArray());
+            ->execute()
+            ->toArray();
     }
 
     public function findConversation(string $id): ?Conversation
@@ -38,17 +37,11 @@ class MessagingService
 
     public function findConversationBetween(string $userId1, string $userId2): ?Conversation
     {
-        $cursor = $this->dm->createQueryBuilder(Conversation::class)
+        return $this->dm->createQueryBuilder(Conversation::class)
             ->field('participantIds')->all([$userId1, $userId2])
             ->limit(1)
             ->getQuery()
-            ->execute();
-
-        foreach ($cursor as $conversation) {
-            return $conversation;
-        }
-
-        return null;
+            ->getSingleResult();
     }
 
     public function findOrCreateConversation(User $user1, User $user2): ?Conversation
@@ -58,8 +51,8 @@ class MessagingService
         }
 
         $existing = $this->findConversationBetween(
-            (string) $user1->getId(),
-            (string) $user2->getId()
+            (string)$user1->getId(),
+            (string)$user2->getId()
         );
 
         if ($existing) {
@@ -104,20 +97,19 @@ class MessagingService
 
     public function getMessages(Conversation $conversation, int $limit = 50): array
     {
-        $cursor = $this->dm->createQueryBuilder(Message::class)
+        return $this->dm->createQueryBuilder(Message::class)
             ->field('conversationId')->equals($conversation->getId())
             ->sort('createdAt', 'asc')
             ->limit($limit)
             ->getQuery()
-            ->execute();
-
-        return array_values($cursor->toArray());
+            ->execute()
+            ->toArray();
     }
 
     public function markAsRead(Conversation $conversation, User $user): void
     {
         $unreadCount = $conversation->getUnreadCount();
-        $userId = (string) $user->getId();
+        $userId = (string)$user->getId();
 
         if (!empty($unreadCount[$userId])) {
             $unreadCount[$userId] = 0;
