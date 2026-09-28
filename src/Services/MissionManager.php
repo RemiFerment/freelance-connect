@@ -13,6 +13,7 @@ use App\Interfaces\NotificationManagerInterface;
 use App\Repository\MissionStatusRepository;
 use App\Services\MessagingService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 final class MissionManager implements MissionManagerInterface
 {
@@ -68,11 +69,16 @@ final class MissionManager implements MissionManagerInterface
         $this->em->flush();
     }
 
-    public function setMissionCompleted(Mission $mission): void
+    public function setMissionCompleted(Mission $mission): bool
     {
-        $mission->setStatus($this->missionStatusRepository->findOneByCode(MissionStatusEnum::COMPLETED->value));
-        $this->em->persist($mission);
-        $this->em->flush();
+        try {
+            $mission->setStatus($this->missionStatusRepository->findOneByCode(MissionStatusEnum::COMPLETED->value));
+            $this->em->persist($mission);
+            $this->em->flush();
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     public function acceptCandidacy(Mission $mission, Candidacy $candidacy, User $currentUser): void

@@ -6,7 +6,7 @@ use App\Entity\User;
 
 class UserFixture
 {
-    public static function createUserFixture(): User
+    public static function createFakeUser(): User
     {
         return (new User())->setEmail("test@test.test")
             ->setFirstname("Test")

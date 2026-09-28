@@ -49,7 +49,7 @@ interface MissionManagerInterface
      * Sets a mission as completed.
      * @param Mission $mission
      */
-    public function setMissionCompleted(Mission $mission): void;
+    public function setMissionCompleted(Mission $mission): bool;
 
     /**
      * [ADMIN] Deletes a mission.
